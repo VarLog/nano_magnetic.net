@@ -27,6 +27,16 @@ namespace ClusterLib
             Z = _Z;
         }
 
+        public double mod()
+        {
+            return Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
+        public double square()
+        {
+            return X * X + Y * Y + Z * Z;
+        }
+
         public static PointCL operator *(PointCL v1, PointCL v2)
         {
             return new PointCL (v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z);
@@ -57,9 +67,5 @@ namespace ClusterLib
             return new PointCL (v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
         }
 
-        public double mod()
-        {
-            return Math.Sqrt(X * X + Y * Y + Z * Z);
-        }
     }
 }

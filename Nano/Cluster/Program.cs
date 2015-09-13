@@ -1,4 +1,5 @@
 ﻿using ClusterLib;
+using System.Diagnostics;
 
 namespace Cluster
 {
@@ -23,6 +24,8 @@ namespace Cluster
             cluster.MagneticField = magnetic;
 
             cluster.calculate(1500, 300);
+
+            cluster.Result.ForEach (r => Debug.WriteLine("U: " + r.U + " R: " + r.R));
         }
     }
 }
