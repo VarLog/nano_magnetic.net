@@ -51,14 +51,28 @@ namespace ClusterLib
             Z = z;
         }
 
+        /// <summary>
+        /// Module (distance) of Vector instance.
+        /// </summary>
+        /// <returns>Scalar</returns>
         public double mod ()
         {
-            return Math.Sqrt (X * X + Y * Y + Z * Z);
+            return Math.Sqrt (square ());
         }
 
         public double square ()
         {
             return X * X + Y * Y + Z * Z;
+        }
+
+        /// <summary>
+        /// Dot product of two vector: this and that.
+        /// </summary>
+        /// <param name="that">Another Vector</param>
+        /// <returns>Scalar</returns>
+        public double dot (Vector that)
+        {
+            return X * that.X + Y * that.Y + Z * that.Z;
         }
 
         public static Vector operator * (Vector v1, Vector v2)
