@@ -26,17 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 
 namespace ClusterLib
 {
     public class Sphere
     {
-        public Magnetic MagneticField { get; set; }
+        readonly public Magnetic MagneticField;
 
         readonly public double Radius;
-
-        readonly public Vector MagneticVector;
 
         readonly public List<Result> Result = new List<Result> ();
 
@@ -49,21 +46,10 @@ namespace ClusterLib
         /// </summary>
         double[,] mat11, mat12, mat13, mat22, mat23, mat33;
 
-        public Sphere (double radius, Vector magneticVector)
+        public Sphere (double radius, Magnetic magneticField)
         {
             Radius = radius;
-            MagneticVector = magneticVector;
-        }
-
-        public Sphere (double radius)
-        {
-            Radius = radius;
-
-            var R = new Random ();
-            var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
-                                 2 * (R.NextDouble () - 0.5), 
-                                 2 * (R.NextDouble () - 0.5));
-            MagneticVector = randVector;
+            MagneticField = magneticField;
         }
 
         void createRandromAtoms (Material material, int count)
@@ -86,7 +72,7 @@ namespace ClusterLib
 
                 atoms.Add (atom);
                 atom.GenNormalVector ();
-                atom.MagneticVector = MagneticVector;
+                atom.MagneticVector = MagneticField.MagneticVector;
             }
         }
 
@@ -225,7 +211,7 @@ namespace ClusterLib
             for (double i = h; i >= -h; i = i - step) {
                 double sum = 0;
 
-                var H0cur = MagneticVector * i;
+                var H0cur = MagneticField.MagneticVector * i;
 
                 double rave;
                 while (true) {
@@ -239,7 +225,7 @@ namespace ClusterLib
                 }
 
                 atoms.ForEach (a => {
-                    var v = a.MagneticVector * MagneticVector;
+                    var v = a.MagneticVector * MagneticField.MagneticVector;
                     sum += v.X + v.Y + v.Z;
                 });
 
@@ -254,7 +240,7 @@ namespace ClusterLib
             for (double i = H; i >= -H; i = i - step) {
                 double sum = 0;
              
-                var H0cur = MagneticVector * i;
+                var H0cur = MagneticField.MagneticVector * i;
 
                 double rave;
                 int iterCount = 0;
@@ -274,7 +260,7 @@ namespace ClusterLib
                 }
 
                 atoms.ForEach (a => {
-                    var v = a.MagneticVector * MagneticVector;
+                    var v = a.MagneticVector * MagneticField.MagneticVector;
                     sum += v.X + v.Y + v.Z;
                 });
 
@@ -288,7 +274,7 @@ namespace ClusterLib
                 
             for (int i = 0; i < atoms.Count; i++) {
                 if (i != j) {
-                    var atom = atoms [j];
+                    var atom = atoms [i];
                     var magneticVector = atom.MagneticVector;
 
                     HM.X = HM.X + mat11 [j, i] * magneticVector.X +

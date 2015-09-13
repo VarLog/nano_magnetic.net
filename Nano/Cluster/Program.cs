@@ -37,13 +37,7 @@ namespace Cluster
             var material = new Material (4000, 800, 20e-7);
 
             const double radius = 80e-7;
-            var magneticVector = new Vector (1) / Math.Sqrt (3);
 
-            //var cluster = new Sphere (radius, magneticVector);
-            //cluster.AddAtomList(material, 20);
-
-            var cluster = new Sphere (radius, magneticVector);
-            cluster.AddDetermList (material);
 
             var magnetic = new Magnetic ();
             magnetic.kappa = 0.2;
@@ -51,8 +45,24 @@ namespace Cluster
             magnetic.stabkoeff = 30;
             magnetic.EpsR = 1e-12;
 
-            cluster.MagneticField = magnetic;
+//            {
+//                var R = new Random ();
+//                var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
+//                    2 * (R.NextDouble () - 0.5), 
+//                    2 * (R.NextDouble () - 0.5));
+//                magnetic.MagneticVector = randVector;
+//            }
 
+            magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);
+
+
+            //var cluster = new Sphere (radius, magneticVector);
+            //cluster.AddAtomList(material, 20);
+
+            var cluster = new Sphere (radius, magnetic);
+            cluster.AddDetermList (material);
+
+                
             cluster.calculate (1500, 300);
 
             cluster.Result.ForEach (r => Debug.WriteLine ("U: " + r.U + " R: " + r.R));
