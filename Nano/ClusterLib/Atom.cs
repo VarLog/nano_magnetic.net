@@ -21,9 +21,9 @@ namespace ClusterLib
 
         #region Constructors
 
-        public Atom (Material _material)
+        public Atom (Material material)
         {
-            Material = _material;
+            Material = material;
         }
 
         #endregion

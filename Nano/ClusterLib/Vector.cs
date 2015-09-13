@@ -22,11 +22,11 @@ namespace ClusterLib
             X = Y = Z = value;
         }
 
-        public Vector (double _X, double _Y, double _Z)
+        public Vector (double x, double y, double z)
         {
-            X = _X;
-            Y = _Y;
-            Z = _Z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public double mod ()

@@ -16,14 +16,14 @@ namespace ClusterLib
 
         public double Volume { get; }
 
-        public Material (double _K1, double _Ms, double _Radius)
+        public Material (double k1, double ms, double radius)
         {
-            K1 = _K1;
-            Ms = _Ms;
-            Radius = _Radius;
-            Diametr = 2 * _Radius;
+            K1 = k1;
+            Ms = ms;
+            Radius = radius;
+            Diametr = 2 * radius;
             Hk = 2 * K1 / Ms;
-            Volume = 4 * Math.PI * Radius * Radius * Radius / 3;
+            Volume = 4 * Math.PI * Math.Pow (Radius, 3) / 3;
         }
     }
 }
