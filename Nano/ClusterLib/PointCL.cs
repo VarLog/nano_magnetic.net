@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace ClusterLib
 {
     public struct PointCL 
@@ -19,6 +20,21 @@ namespace ClusterLib
             X = _X;
             Y = _Y;
             Z = _Z;
+        }
+
+        public static PointCL operator *(PointCL v1, PointCL v2)
+        {
+            return new PointCL (v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z);
+        }
+
+        public static PointCL operator -(PointCL v1, PointCL v2)
+        {
+            return new PointCL (v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
+        }
+
+        public double mod()
+        {
+            return Math.Sqrt(X * X + Y * Y + Z * Z);
         }
     }
 }

@@ -8,7 +8,8 @@ namespace Cluster
         {
             var material = new Material(40000, 500, 20e-7);
 
-            var cluster = new Sphere();
+            const double radius = 80e-7;
+            var cluster = new Sphere(radius);
 
             //cluster.AddAtomList(atom, 20);
             cluster.AddDetermList(material);
