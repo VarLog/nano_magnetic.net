@@ -11,11 +11,9 @@ namespace ClusterLib
 
         public double Radius;
 
-        //public double Hk;
-        //public double Hdip; //Ms*etaVCl
         public double Qint;     //Hdip/Hk;
 
-        public PointCL MagneticVector = new PointCL();
+        public PointCL MagneticVector;
 
         public List<Result> Result1 = new List<Result>();
         public List<Result> Result2 = new List<Result>();
@@ -253,9 +251,9 @@ namespace ClusterLib
             double Rd, Rd2 = 0, Rd3;
             Volume = 4 * Math.PI * Radius * Radius * Radius / 3;
             etaVcl = Atoms.Count * Math.Pow(Atoms[0].material.Radius / Radius, 3);
-            Hdip = Atoms[0].material.Ms * etaVcl;
 
-            Hk = 2 * Atoms[0].material.K1 / Atoms[0].material.Ms;
+            var Hdip = Atoms[0].material.Ms * etaVcl;
+            var Hk = 2 * Atoms[0].material.K1 / Atoms[0].material.Ms;
             Qint = Hdip / Hk;
 
             M11 = new double[Atoms.Count, Atoms.Count];
