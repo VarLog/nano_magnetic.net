@@ -5,51 +5,28 @@ namespace ClusterLib
 {
     public class Sphere
     {
-        public List<Atom> Atoms = new List<Atom>();
+        readonly List<Atom> Atoms = new List<Atom>();
        
-        public Magnetic MagneticField = new Magnetic();
+        public Magnetic MagneticField { get; set; }
 
-        public double Radius;
+        double Radius { get; set; }
 
-        public double Qint;     //Hdip/Hk;
+        PointCL MagneticVector = new PointCL();
 
-        public PointCL MagneticVector;
+        public List<Result> Result1 { get; private set; } = new List<Result>();
+        public List<Result> Result2 { get; private set; } = new List<Result>();
 
-        public List<Result> Result1 = new List<Result>();
-        public List<Result> Result2 = new List<Result>();
+        double Hd_num;   //Hd_num = Ms*Volume/RCl3;
 
-        public double Hd_num;   //Hd_num = Ms*Volume/RCl3;
-        public double omH0Cur; 
-        public double psiH0Cur;
-
-        public double nhx; 
-        public double nhy; 
-        public double nhz;
-
-        public double H0xcur, H0ycur, H0zcur;
-
-        public double Volume;
-        
-        public double etaVcl;
         //Матрицы
-        public double[,] M11, M12, M13, M21, M22, M23, M31, M32, M33;
-        
-        public double r;
+        double[,] M11, M12, M13, M22, M23, M33;
 
-        public double Rave; 
-
-        public double koef;
-
-        public double Sum;
         public Sphere()
         {
             var R = new Random();
             MagneticVector.X = 2 * (R.NextDouble() - 0.5);
             MagneticVector.Y = 2 * (R.NextDouble() - 0.5);
             MagneticVector.Z = 2 * (R.NextDouble() - 0.5);
-
-            omH0Cur = Math.PI * R.NextDouble() / 2;
-            psiH0Cur = Math.PI * R.NextDouble();
         }
 
         public Sphere(double _Radius)
@@ -59,14 +36,12 @@ namespace ClusterLib
             MagneticVector.X = 2 * (R.NextDouble() - 0.5);
             MagneticVector.Y = 2 * (R.NextDouble() - 0.5);
             MagneticVector.Z = 2 * (R.NextDouble() - 0.5);
-            Hd_num = Atoms [0].material.Volume * Atoms [0].material.Ms / Radius;
         }
         
         public void AddAtomList(Material material, long Num)
         {
             var R = new Random();
             Radius = 80e-7;
-            koef = 8e-6;         
 
             for (int i = 0; i < Num; i++)
             {
@@ -101,22 +76,13 @@ namespace ClusterLib
 
             Hd_num = Atoms[0].material.Volume * Atoms[0].material.Ms / Math.Pow(Radius, 3);
             double nRx, nRy, nRz;
-            double Rd, Rd2=0, Rd3;
-            Volume = 4 * Math.PI * Radius *Radius*Radius / 3;
-            etaVcl = Atoms.Count * Math.Pow(Atoms[0].material.Radius / Radius, 3);
-
-            var Hdip = Atoms[0].material.Ms * etaVcl;
-            var Hk = 2 * Atoms[0].material.K1 / Atoms[0].material.Ms;
-            Qint = Hdip / Hk;
+            double Rd, Rd2, Rd3;
 
             M11 = new double[Atoms.Count, Atoms.Count];
             M12 = new double[Atoms.Count, Atoms.Count];
             M13 = new double[Atoms.Count, Atoms.Count];
-            M21 = new double[Atoms.Count, Atoms.Count];
             M22 = new double[Atoms.Count, Atoms.Count];
             M23 = new double[Atoms.Count, Atoms.Count];
-            M31 = new double[Atoms.Count, Atoms.Count];
-            M32 = new double[Atoms.Count, Atoms.Count];
             M33 = new double[Atoms.Count, Atoms.Count];
 
             for (int i = 0; i < Atoms.Count; i++ )
@@ -171,8 +137,6 @@ namespace ClusterLib
             var atom3 = new Atom();
             var atom4 = new Atom();
 
-            var R = new Random();          
-
             atom1.material = material;
             atom2.material = material;
             atom3.material = material;
@@ -182,7 +146,7 @@ namespace ClusterLib
             atom1.Position.Y = 0.25;
             atom1.Position.Z = 0.25;
             atom1.Radius = 20e-7;
-            atom1.material.Volume = Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
+            atom1.material.Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
             atom1.NormalVector.X = 1/Math.Sqrt(2);
             atom1.NormalVector.Y = 1/Math.Sqrt(2);
             atom1.NormalVector.Z = 0;
@@ -200,7 +164,7 @@ namespace ClusterLib
             atom2.Position.Y = 0.5;
             atom2.Position.Z = 0.25;
             atom2.Radius = 20e-7;
-            atom2.material.Volume = Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
+            atom2.material.Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
             atom2.NormalVector.X = 0;
             atom2.NormalVector.Y = 0;
             atom2.NormalVector.Z = 1;
@@ -218,7 +182,7 @@ namespace ClusterLib
             atom3.Position.Y = -0.25;
             atom3.Position.Z = 0.25;
             atom3.Radius = 20e-7;
-            atom3.material.Volume = Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
+            atom3.material.Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
             atom3.NormalVector.X = 1 / Math.Sqrt(3);
             atom3.NormalVector.Y = 1 / Math.Sqrt(3);
             atom3.NormalVector.Z = 1 / Math.Sqrt(3);
@@ -232,7 +196,7 @@ namespace ClusterLib
             atom4.Position.Y = -0.25;
             atom4.Position.Z = -0.25;
             atom4.Radius = 20e-7;
-            atom4.material.Volume = Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
+            atom4.material.Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
             atom4.NormalVector.X = 0;
             atom4.NormalVector.Y = 0;
             atom4.NormalVector.Z = 1;
@@ -243,27 +207,16 @@ namespace ClusterLib
             atom4.MagneticVector.Z = 1 / Math.Sqrt(3);
             Atoms.Add(atom4);            
         
-
             Hd_num = Atoms[0].material.Volume * Atoms[0].material.Ms / Math.Pow(Radius, 3);
-            koef = 8e-6;
-            
+
             double nRx, nRy, nRz;
             double Rd, Rd2 = 0, Rd3;
-            Volume = 4 * Math.PI * Radius * Radius * Radius / 3;
-            etaVcl = Atoms.Count * Math.Pow(Atoms[0].material.Radius / Radius, 3);
-
-            var Hdip = Atoms[0].material.Ms * etaVcl;
-            var Hk = 2 * Atoms[0].material.K1 / Atoms[0].material.Ms;
-            Qint = Hdip / Hk;
 
             M11 = new double[Atoms.Count, Atoms.Count];
             M12 = new double[Atoms.Count, Atoms.Count];
             M13 = new double[Atoms.Count, Atoms.Count];
-            M21 = new double[Atoms.Count, Atoms.Count];
             M22 = new double[Atoms.Count, Atoms.Count];
             M23 = new double[Atoms.Count, Atoms.Count];
-            M31 = new double[Atoms.Count, Atoms.Count];
-            M32 = new double[Atoms.Count, Atoms.Count];
             M33 = new double[Atoms.Count, Atoms.Count];
 
             for (int i = 0; i < Atoms.Count; i++)
@@ -315,7 +268,7 @@ namespace ClusterLib
             atom1.Position.Y = 0.25;
             atom1.Position.Z = 0.25;
             atom1.Radius = 20e-7;
-            atom1.material.Volume = Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
+            atom1.material.Volume = 4 * Math.PI * atom1.Radius * atom1.Radius * atom1.Radius / 3;
             atom1.NormalVector.X = 1;
             atom1.NormalVector.Y = 0;
             atom1.NormalVector.Z = 0;            
@@ -336,18 +289,18 @@ namespace ClusterLib
                 SSum = 0;
                 res.U = i;
 
-                H0xcur = i * MagneticVector.X;
-                H0ycur = i * MagneticVector.Y;
-                H0zcur = i * MagneticVector.Z;
+                PointCL H0cur;
+                H0cur.X = i * MagneticVector.X;
+                H0cur.Y = i * MagneticVector.Y;
+                H0cur.Z = i * MagneticVector.Z;
 
-                int Niter = 0;
+                double rave;
                 do
                 {
-                    CountH();
+                    CountH(H0cur);
                     MakeStep();
-                    CountForce();
-                    Niter++;
-                } while ((Rave > MagneticField.EpsR));
+                    rave = CountForce();
+                } while ((rave > MagneticField.EpsR));
 
 
                 for (int j = 0; j < Atoms.Count; j++)
@@ -373,18 +326,20 @@ namespace ClusterLib
                 SSum = 0;
                 res.U = i;
              
-                H0xcur = i * MagneticVector.X;
-                H0ycur = i * MagneticVector.Y;
-                H0zcur = i * MagneticVector.Z;
+                PointCL H0cur;
+                H0cur.X = i * MagneticVector.X;
+                H0cur.Y = i * MagneticVector.Y;
+                H0cur.Z = i * MagneticVector.Z;
 
+                double rave;
                 int Niter = 0;
                 do
                 {
-                    CountH();
+                    CountH(H0cur);
                     MakeStep();
-                    CountForce();
+                    rave = CountForce();
                     Niter++;
-                } while ((Rave > MagneticField.EpsR)||(MaxIter!=Niter));
+                } while ((rave > MagneticField.EpsR)||(MaxIter!=Niter));
 
 
                 for (int j = 0; j < Atoms.Count; j++)
@@ -421,9 +376,8 @@ namespace ClusterLib
         }
             //
        
-        public void CountH()
+        public void CountH(PointCL h0cur)
         {
-           
             double Hxi, Hyi, Hzi;
             double Hxa, Hya, Hza, sp;
 
@@ -443,9 +397,9 @@ namespace ClusterLib
                 Hyi = -Hd_num * Atoms[i].HDman.Y; 
                 Hzi = -Hd_num * Atoms[i].HDman.Z;
 
-                Atoms[i].Hrx = Hxa + Hxi + H0xcur;
-                Atoms[i].Hry = Hya + Hyi + H0ycur;
-                Atoms[i].Hrz = Hza + Hzi + H0zcur;              
+                Atoms[i].Hrx = Hxa + Hxi + h0cur.X;
+                Atoms[i].Hry = Hya + Hyi + h0cur.Y;
+                Atoms[i].Hrz = Hza + Hzi + h0cur.Z;              
             }
 
         }
@@ -487,13 +441,15 @@ namespace ClusterLib
             }
         }
 
-        public void CountForce()
+        public double CountForce()
         {         
             double vx, vy, vz;
             double Hr;
             double x;
             double Rmax = 0;
-            Rave = 0;
+
+            double rave = 0;
+
             for (int i = 0; i < Atoms.Count; i++)
             {
                 Hr = Math.Sqrt(Atoms[i].Hrx * Atoms[i].Hrx + Atoms[i].Hry * Atoms[i].Hry + Atoms[i].Hrz * Atoms[i].Hrz);
@@ -505,10 +461,12 @@ namespace ClusterLib
                 {
                     Rmax = x;
                 }
-                    Rave = Rave + Math.Abs(x);
+                    rave = rave + Math.Abs(x);
                 
             }
-            Rave = Rave / Atoms.Count;
+            rave = rave / Atoms.Count;
+
+            return rave;
         }       
     }
 }

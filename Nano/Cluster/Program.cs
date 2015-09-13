@@ -13,11 +13,13 @@ namespace Cluster
             //cluster.AddAtomList(atom, 20);
             cluster.AddDetermList(material);
 
-            cluster.MagneticField.kappa = 0.2;
-            cluster.MagneticField.Stc = 30;
-            cluster.MagneticField.stabkoeff = 30;
-            cluster.MagneticField.EpsR = 1e-12;
+            var magnetic = new Magnetic ();
+            magnetic.kappa = 0.2;
+            magnetic.Stc = 30;
+            magnetic.stabkoeff = 30;
+            magnetic.EpsR = 1e-12;
 
+            cluster.MagneticField = magnetic;
 
             cluster.calculate(1500, 300);
         }
