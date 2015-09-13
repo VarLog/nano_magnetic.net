@@ -340,14 +340,14 @@ namespace ClusterLib
 
                 var at = 1 / (1 + Math.Pow (dt * H.mod (), 2));
 
-                var x = H * atom.MagneticVector * dt * dt;
+                var x = H.dot (atom.MagneticVector) * dt * dt;
 
                 var v = new Vector ();
                 v.X = dt * (H.Y * Calc.Z - H.Z * Calc.Y);
                 v.Y = dt * (H.Z * Calc.X - H.X * Calc.Z);
                 v.Z = dt * (H.X * Calc.Y - H.Y * Calc.X);
 
-                Calc = (Calc + x * H + v) * at;
+                Calc = (Calc + H * x + v) * at;
 
                 atom.MagneticVector = Calc / Calc.mod ();
             }
