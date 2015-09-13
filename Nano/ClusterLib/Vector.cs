@@ -35,20 +35,17 @@ namespace ClusterLib
 
         public double Z { set; get; }
 
-        public Vector ()
-        {
-            X = default(double);
-            Y = default(double);
-            Z = default(double);
-        }
+        //public Vector ()   {       }
 
-        public Vector (double value)
+        public Vector (double value):this()
         {
             X = Y = Z = value;
         }
 
-        public Vector (double x, double y, double z)
+        public Vector(double x, double y, double z)
+            : this()
         {
+
             X = x;
             Y = y;
             Z = z;

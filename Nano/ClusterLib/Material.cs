@@ -29,17 +29,17 @@ namespace ClusterLib
 {
     public class Material
     {
-        public double K1 { get; }
+        public double K1 { set; get; }
 
-        public double Ms { get; }
+        public double Ms { set; get; }
 
-        public double Hk { get; }
+        public double Hk { set; get; }
 
-        public double Diametr { get; }
+        public double Diametr { set;  get; }
 
-        public double Radius { get; }
+        public double Radius { set;  get; }
 
-        public double Volume { get; }
+        public double Volume { set; get; }
 
         public Material (double k1, double ms, double radius)
         {
