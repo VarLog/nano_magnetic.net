@@ -31,5 +31,6 @@ namespace ClusterLib
         public double stabkoeff;
         public double kappa;
         public double EpsR;
+        public Vector MagneticVector;
     }
 }
