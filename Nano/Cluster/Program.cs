@@ -5,15 +5,15 @@ namespace Cluster
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main (string[] args)
         {
-            var material = new Material(40000, 500, 20e-7);
+            var material = new Material (40000, 500, 20e-7);
 
             const double radius = 80e-7;
-            var cluster = new Sphere(radius);
+            var cluster = new Sphere (radius);
 
             //cluster.AddAtomList(material, 20);
-            cluster.AddDetermList(material);
+            cluster.AddDetermList (material);
 
             var magnetic = new Magnetic ();
             magnetic.kappa = 0.2;
@@ -23,9 +23,9 @@ namespace Cluster
 
             cluster.MagneticField = magnetic;
 
-            cluster.calculate(1500, 300);
+            cluster.calculate (1500, 300);
 
-            cluster.Result.ForEach (r => Debug.WriteLine("U: " + r.U + " R: " + r.R));
+            cluster.Result.ForEach (r => Debug.WriteLine ("U: " + r.U + " R: " + r.R));
         }
     }
 }
