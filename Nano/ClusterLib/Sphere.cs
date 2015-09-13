@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace ClusterLib
 {
@@ -311,7 +312,7 @@ namespace ClusterLib
             for (int i = 0; i < atoms.Count; i++) {
                 var atom = atoms [i];
 
-                var sp = (atom.MagneticVector * atom.NormalVector).square ();
+                var sp = atom.MagneticVector.dot (atom.NormalVector);
 
                 var Ha = atom.NormalVector * sp * atom.Material.Hk;
 
