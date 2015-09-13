@@ -12,7 +12,7 @@ namespace ClusterLib
 
         public double Radius { get; set; }
 
-        PointCL MagneticVector = new PointCL ();
+        Vector MagneticVector = new Vector ();
 
         public List<Result> Result { get; } = new List<Result>();
 
@@ -27,7 +27,7 @@ namespace ClusterLib
             Radius = _Radius;
             var R = new Random ();
 
-            var randVector = new PointCL (2 * (R.NextDouble () - 0.5), 
+            var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
                                  2 * (R.NextDouble () - 0.5), 
                                  2 * (R.NextDouble () - 0.5));
             MagneticVector = randVector;
@@ -40,7 +40,7 @@ namespace ClusterLib
             for (int i = 0; i < count; i++) {
                 var atom = new Atom (material);
 
-                var randPosition = new PointCL ((R.NextDouble () - 0.5) * Radius, 
+                var randPosition = new Vector ((R.NextDouble () - 0.5) * Radius, 
                                        (R.NextDouble () - 0.5) * Radius, 
                                        (R.NextDouble () - 0.5) * Radius);
 
@@ -110,31 +110,31 @@ namespace ClusterLib
 
         public void AddDetermList (Material material)
         {
-            MagneticVector = new PointCL (1) / Math.Sqrt (3);
+            MagneticVector = new Vector (1) / Math.Sqrt (3);
 
             {
                 var atom1 = new Atom (material);
-                atom1.Position = new PointCL (0.5, 0.25, 0.25);
-                atom1.NormalVector = new PointCL (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
-                atom1.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                atom1.Position = new Vector (0.5, 0.25, 0.25);
+                atom1.NormalVector = new Vector (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
+                atom1.MagneticVector = new Vector (1) / Math.Sqrt (3);
                 Atoms.Add (atom1);
 
                 var atom2 = new Atom (material);
-                atom2.Position = new PointCL (-0.25, 0.5, 0.25);
-                atom2.NormalVector = new PointCL (0, 0, 1);
-                atom2.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                atom2.Position = new Vector (-0.25, 0.5, 0.25);
+                atom2.NormalVector = new Vector (0, 0, 1);
+                atom2.MagneticVector = new Vector (1) / Math.Sqrt (3);
                 Atoms.Add (atom2);
 
                 var atom3 = new Atom (material);
-                atom3.Position = new PointCL (-0.5, -0.25, 0.25);
-                atom3.NormalVector = new PointCL (1) / Math.Sqrt (3);
-                atom3.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                atom3.Position = new Vector (-0.5, -0.25, 0.25);
+                atom3.NormalVector = new Vector (1) / Math.Sqrt (3);
+                atom3.MagneticVector = new Vector (1) / Math.Sqrt (3);
                 Atoms.Add (atom3);
 
                 var atom4 = new Atom (material);
-                atom4.Position = new PointCL (-0.25, -0.25, -0.25);
-                atom4.NormalVector = new PointCL (0, 0, 1);
-                atom4.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                atom4.Position = new Vector (-0.25, -0.25, -0.25);
+                atom4.NormalVector = new Vector (0, 0, 1);
+                atom4.MagneticVector = new Vector (1) / Math.Sqrt (3);
                 Atoms.Add (atom4);
             }
 
@@ -183,12 +183,12 @@ namespace ClusterLib
 
         public void AddDetermListOne (Material material)
         {
-            MagneticVector = new PointCL (1) / Math.Sqrt (3);
+            MagneticVector = new Vector (1) / Math.Sqrt (3);
 
             var atom1 = new Atom (material);
-            atom1.Position = new PointCL (0.5, 0.25, 0.25);
-            atom1.NormalVector = new PointCL (1, 0, 0);
-            atom1.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+            atom1.Position = new Vector (0.5, 0.25, 0.25);
+            atom1.NormalVector = new Vector (1, 0, 0);
+            atom1.MagneticVector = new Vector (1) / Math.Sqrt (3);
             Atoms.Add (atom1);
         }
 
@@ -255,9 +255,9 @@ namespace ClusterLib
         }
 
         //проблема
-        public PointCL CountHdip (int j)
+        public Vector CountHdip (int j)
         {
-            var HM = new PointCL ();
+            var HM = new Vector ();
                 
             for (int i = 0; i < Atoms.Count; i++) {
                 if (i != j) {
@@ -280,7 +280,7 @@ namespace ClusterLib
             return HM;        
         }
 
-        public void CountH (PointCL h0cur)
+        public void CountH (Vector h0cur)
         {
             for (int i = 0; i < Atoms.Count; i++) {
                 var atom = Atoms [i];
@@ -307,7 +307,7 @@ namespace ClusterLib
                      (30 * maxHr * (1 + MagneticField.Stc) * (1 + MagneticField.kappa * MagneticField.kappa));
 
             foreach (var atom in Atoms) {
-                PointCL Calc;
+                Vector Calc;
                 Calc = atom.MagneticVector;
 
                 var H = atom.Hr + Calc * maxHr * MagneticField.Stc;
@@ -316,7 +316,7 @@ namespace ClusterLib
 
                 var x = H * atom.MagneticVector * dt * dt;
 
-                var v = new PointCL ();
+                var v = new Vector ();
                 v.X = dt * (H.Y * Calc.Z - H.Z * Calc.Y);
                 v.Y = dt * (H.Z * Calc.X - H.X * Calc.Z);
                 v.Z = dt * (H.X * Calc.Y - H.Y * Calc.X);
@@ -334,7 +334,7 @@ namespace ClusterLib
             double rave = 0;
 
             foreach (var atom in Atoms) {
-                var v = new PointCL ();
+                var v = new Vector ();
                 v.X = atom.Hr.Y * atom.MagneticVector.Z - atom.Hr.Z * atom.MagneticVector.Y;
                 v.Y = atom.Hr.Z * atom.MagneticVector.X - atom.Hr.X * atom.MagneticVector.Z;
                 v.Z = atom.Hr.X * atom.MagneticVector.Y - atom.Hr.Y * atom.MagneticVector.X;

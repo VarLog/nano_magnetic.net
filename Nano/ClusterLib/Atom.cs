@@ -7,15 +7,15 @@ namespace ClusterLib
     {
         #region Parametrs
 
-        public PointCL Position { get; set; }
+        public Vector Position { get; set; }
 
-        public PointCL MagneticVector { get; set; }
+        public Vector MagneticVector { get; set; }
 
-        public PointCL NormalVector { get; set; }
+        public Vector NormalVector { get; set; }
 
         public Material Material { get; private set; }
 
-        public PointCL Hr { get; set; }
+        public Vector Hr { get; set; }
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace ClusterLib
         {
             var R = new Random ();
 
-            var randVector = new PointCL ((R.NextDouble () - 0.5),
+            var randVector = new Vector ((R.NextDouble () - 0.5),
                                  (R.NextDouble () - 0.5),
                                  (R.NextDouble () - 0.5));
 

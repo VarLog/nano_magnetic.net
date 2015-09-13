@@ -42,10 +42,10 @@
     <Compile Include="Atom.cs" />
     <Compile Include="Magnetic.cs" />
     <Compile Include="Material.cs" />
-    <Compile Include="PointCL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Sphere.cs" />
+    <Compile Include="Vector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
