@@ -56,7 +56,8 @@ namespace ClusterLib
         {
             var R = new Random ();
 
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 var atom = new Atom (material);
 
                 var randPosition = new Vector ((R.NextDouble () - 0.5) * Radius, 
@@ -65,7 +66,8 @@ namespace ClusterLib
                 atom.Position = randPosition;
 
                 bool isIntersected = atoms.Any (atom.isIntersected);
-                if (isIntersected) {
+                if (isIntersected)
+                {
                     i--;
                     continue;
                 }
@@ -92,9 +94,12 @@ namespace ClusterLib
 
             atoms.ForEach (a => a.Position = a.Position / Radius);
 
-            for (int i = 0; i < atoms.Count; i++) {
-                for (int j = 0; j < atoms.Count; j++) {
-                    if (i == j) {
+            for (int i = 0; i < atoms.Count; i++)
+            {
+                for (int j = 0; j < atoms.Count; j++)
+                {
+                    if (i == j)
+                    {
                         continue;
                     }
 
@@ -163,9 +168,12 @@ namespace ClusterLib
             mat23 = new double[atomsCount, atomsCount];
             mat33 = new double[atomsCount, atomsCount];
 
-            for (int i = 0; i < atoms.Count; i++) {
-                for (int j = 0; j < atoms.Count; j++) {
-                    if (i == j) {
+            for (int i = 0; i < atoms.Count; i++)
+            {
+                for (int j = 0; j < atoms.Count; j++)
+                {
+                    if (i == j)
+                    {
                         continue;
                     }
 
@@ -208,18 +216,21 @@ namespace ClusterLib
 
         public void calculateOne (double h, double step)
         {
-            for (double i = h; i >= -h; i = i - step) {
+            for (double i = h; i >= -h; i = i - step)
+            {
                 double sum = 0;
 
                 var H0cur = MagneticField.MagneticVector * i;
 
                 double rave;
-                while (true) {
+                while (true)
+                {
                     CountH (H0cur);
                     MakeStep ();
                     rave = CountForce ();
 
-                    if (rave <= MagneticField.EpsR) {
+                    if (rave <= MagneticField.EpsR)
+                    {
                         break;
                     }
                 }
@@ -237,7 +248,8 @@ namespace ClusterLib
         {
             const int maxIterCount = 10000;
 
-            for (double i = H; i >= -H; i = i - step) {
+            for (double i = H; i >= -H; i = i - step)
+            {
                 double sum = 0;
              
                 var H0cur = MagneticField.MagneticVector * i;
@@ -245,16 +257,19 @@ namespace ClusterLib
                 double rave;
                 int iterCount = 0;
 
-                while (true) {
+                while (true)
+                {
                     CountH (H0cur);
                     MakeStep ();
                     rave = CountForce ();
 
-                    if (++iterCount >= maxIterCount) {
+                    if (++iterCount >= maxIterCount)
+                    {
                         break;
                     }
 
-                    if (rave <= MagneticField.EpsR) {
+                    if (rave <= MagneticField.EpsR)
+                    {
                         break;
                     }
                 }
@@ -272,8 +287,10 @@ namespace ClusterLib
         {
             var HM = new Vector ();
                 
-            for (int i = 0; i < atoms.Count; i++) {
-                if (i != j) {
+            for (int i = 0; i < atoms.Count; i++)
+            {
+                if (i != j)
+                {
                     var atom = atoms [i];
                     var magneticVector = atom.MagneticVector;
 
@@ -295,7 +312,8 @@ namespace ClusterLib
 
         public void CountH (Vector h0cur)
         {
-            for (int i = 0; i < atoms.Count; i++) {
+            for (int i = 0; i < atoms.Count; i++)
+            {
                 var atom = atoms [i];
 
                 var sp = atom.MagneticVector.dot (atom.NormalVector);
@@ -318,7 +336,8 @@ namespace ClusterLib
             var dt = MagneticField.stabkoeff * Math.PI /
                      (30 * maxHr * (1 + MagneticField.Stc) * (1 + MagneticField.kappa * MagneticField.kappa));
 
-            foreach (var atom in atoms) {
+            foreach (var atom in atoms)
+            {
                 Vector Calc;
                 Calc = atom.MagneticVector;
 
@@ -345,14 +364,16 @@ namespace ClusterLib
 
             double rave = 0;
 
-            foreach (var atom in atoms) {
+            foreach (var atom in atoms)
+            {
                 var v = new Vector ();
                 v.X = atom.Hr.Y * atom.MagneticVector.Z - atom.Hr.Z * atom.MagneticVector.Y;
                 v.Y = atom.Hr.Z * atom.MagneticVector.X - atom.Hr.X * atom.MagneticVector.Z;
                 v.Z = atom.Hr.X * atom.MagneticVector.Y - atom.Hr.Y * atom.MagneticVector.X;
 
                 var x = v.mod () / atom.Hr.mod ();
-                if (Rmax < x) {
+                if (Rmax < x)
+                {
                     Rmax = x;
                 }
 
