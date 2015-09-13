@@ -34,7 +34,7 @@ namespace Cluster
     {
         static void Main (string[] args)
         {
-            var material = new Material (4000, 500, 20e-7);
+            var material = new Material (4000, 800, 20e-7);
 
             const double radius = 80e-7;
             var magneticVector = new Vector (1) / Math.Sqrt (3);
