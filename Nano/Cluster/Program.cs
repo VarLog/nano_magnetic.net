@@ -11,7 +11,7 @@ namespace Cluster
             const double radius = 80e-7;
             var cluster = new Sphere(radius);
 
-            //cluster.AddAtomList(atom, 20);
+            //cluster.AddAtomList(material, 20);
             cluster.AddDetermList(material);
 
             var magnetic = new Magnetic ();

@@ -15,6 +15,11 @@ namespace ClusterLib
             Z = default(double);
         }
 
+        public PointCL(double value)
+        {
+            X = Y = Z = value;
+        }
+
         public PointCL(double _X, double _Y, double _Z)
         {
             X = _X;
@@ -25,6 +30,26 @@ namespace ClusterLib
         public static PointCL operator *(PointCL v1, PointCL v2)
         {
             return new PointCL (v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z);
+        }
+
+        public static PointCL operator *(PointCL v, double scalar)
+        {
+            return new PointCL (v.X * scalar, v.Y * scalar, v.Z * scalar);
+        }
+
+        public static PointCL operator /(PointCL v1, PointCL v2)
+        {
+            return new PointCL (v1.X / v2.X, v1.Y / v2.Y, v1.Z / v2.Z);
+        }
+
+        public static PointCL operator /(PointCL v, double scalar)
+        {
+            return v * (1 / scalar);
+        }
+
+        public static PointCL operator +(PointCL v1, PointCL v2)
+        {
+            return new PointCL (v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
         }
 
         public static PointCL operator -(PointCL v1, PointCL v2)

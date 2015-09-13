@@ -7,23 +7,19 @@ namespace ClusterLib
     {
         #region Parametrs
 
-        public PointCL Position;
+        public PointCL Position { get; set; }
 
-        public PointCL MagneticVector;
+        public PointCL MagneticVector { get; set; }
             
-        public PointCL NormalVector;
+        public PointCL NormalVector { get; set; }
 
-        public Material Material;
+        public Material Material { get; private set; }
 
-        public PointCL Hr;
+        public PointCL Hr { get; set; }
 
         #endregion
 
         #region Constructors
-        public Atom()
-        { 
-        }
-
         public Atom(Material _material)
         {
             Material = _material;
@@ -31,19 +27,16 @@ namespace ClusterLib
 
         #endregion
 
-        public void GenNormalVector(Random R)
+        public void GenNormalVector()
         {
-            NormalVector.X = (R.NextDouble() - 0.5);
-            NormalVector.Y = (R.NextDouble() - 0.5);
-            NormalVector.Z = (R.NextDouble() - 0.5);
+            var R = new Random();
 
-            double norm = Math.Sqrt(NormalVector.X * NormalVector.X + 
-                NormalVector.Y * NormalVector.Y + 
-                NormalVector.Z * NormalVector.Z);
-            
-            NormalVector.X = NormalVector.X / norm;
-            NormalVector.Y = NormalVector.Y / norm;
-            NormalVector.Z = NormalVector.Z / norm; 
+            var randVector = new PointCL ((R.NextDouble () - 0.5),
+                (R.NextDouble () - 0.5),
+                (R.NextDouble () - 0.5));
+
+            NormalVector = randVector;
+            NormalVector = NormalVector / NormalVector.mod();
         }
 
         public bool isIntersected(Atom that)

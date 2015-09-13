@@ -14,8 +14,7 @@ namespace ClusterLib
 
         PointCL MagneticVector = new PointCL();
 
-        public List<Result> Result1 { get; } = new List<Result>();
-        public List<Result> Result2 { get; } = new List<Result>();
+        public List<Result> Result { get; } = new List<Result>();
 
         double Hd_num;   //Hd_num = Ms*Volume/RCl3;
 
@@ -32,20 +31,19 @@ namespace ClusterLib
                                  2 * (R.NextDouble () - 0.5));
             MagneticVector = randVector;
         }
-        
-        public void AddAtomList(Material material, long Num)
+
+        void createRandromAtoms(Material material, long count)
         {
             var R = new Random();
 
-            for (int i = 0; i < Num; i++)
+            for (int i = 0; i < count; i++)
             {
-                var atom = new Atom();
-                atom.Material = material;
+                var atom = new Atom(material);
 
                 var randPosition = new PointCL ((R.NextDouble() - 0.5) * Radius, 
                     (R.NextDouble() - 0.5) * Radius, 
                     (R.NextDouble() - 0.5) * Radius);
-                
+
                 atom.Position = randPosition;
 
                 bool isIntersected = Atoms.Any (atom.isIntersected);
@@ -56,12 +54,16 @@ namespace ClusterLib
                 }
 
                 Atoms.Add(atom);
-                atom.GenNormalVector(R);
+                atom.GenNormalVector();
                 atom.MagneticVector = MagneticVector;
-
             }
+        }
 
-            Hd_num = Atoms[0].Material.Volume * Atoms[0].Material.Ms / Math.Pow(Radius, 3);
+        public void GeneretaAtoms(Material material, long count)
+        {
+            createRandromAtoms(material, count);
+
+            Hd_num = material.Volume * material.Ms / Math.Pow(Radius, 3);
 
             M11 = new double[Atoms.Count, Atoms.Count];
             M12 = new double[Atoms.Count, Atoms.Count];
@@ -72,9 +74,7 @@ namespace ClusterLib
 
             for (int i = 0; i < Atoms.Count; i++ )
             {
-                Atoms[i].Position.X = Atoms[i].Position.X / Radius;
-                Atoms[i].Position.Y = Atoms[i].Position.Y / Radius;
-                Atoms[i].Position.Z = Atoms[i].Position.Z / Radius;
+                Atoms[i].Position = Atoms[i].Position / Radius;
             }
 
             for (int i = 0; i < Atoms.Count; i++)
@@ -83,22 +83,22 @@ namespace ClusterLib
                 {
                     if (i != j)
                     {
-                        var Rd2 = (Atoms[i].Position.X - Atoms[j].Position.X) * (Atoms[i].Position.X - Atoms[j].Position.X) +
-                            (Atoms[i].Position.Y - Atoms[j].Position.Y) * (Atoms[i].Position.Y - Atoms[j].Position.Y) +
-                            (Atoms[i].Position.Z - Atoms[j].Position.Z) * (Atoms[i].Position.Z - Atoms[j].Position.Z);
-                        var Rd = Math.Sqrt(Rd2);
-                        var Rd3 = Rd * Rd2;
+                        var atom1 = Atoms [i];
+                        var atom2 = Atoms [j];
 
-                        var nRx = (Atoms[i].Position.X - Atoms[j].Position.X) / Rd;
-                        var nRy = (Atoms[i].Position.Y - Atoms[j].Position.Y) / Rd;
-                        var nRz = (Atoms[i].Position.Z - Atoms[j].Position.Z) / Rd;
+                        var diff = atom1.Position - atom2.Position;
 
-                        M11[i, j] = (1 - 3 * nRx * nRx) / Rd3;
-                        M12[i, j] = -3 * nRx * nRy / Rd3;
-                        M13[i, j] = -3 * nRx * nRz / Rd3;
-                        M22[i, j] = (1 - 3 * nRy * nRy) / Rd3;
-                        M23[i, j] = -3 * nRy * nRz / Rd3;
-                        M33[i, j] = (1 - 3 * nRz * nRz) / Rd3;
+                        var distance = diff.mod();
+                        var distanceCube = Math.Pow (distance, 3);
+
+                        var nR = diff / distance;
+
+                        M11[i, j] = (1 - 3 * nR.X * nR.X) / distanceCube;
+                        M12[i, j] = -3 * nR.X * nR.Y / distanceCube;
+                        M13[i, j] = -3 * nR.X * nR.Z / distanceCube;
+                        M22[i, j] = (1 - 3 * nR.Y * nR.Y) / distanceCube;
+                        M23[i, j] = -3 * nR.Y * nR.Z / distanceCube;
+                        M33[i, j] = (1 - 3 * nR.Z * nR.Z) / distanceCube;
 
                         M11[j, i] = M11[i, j]; M12[j, i] = M12[i, j]; M13[j, i] = M13[i, j];
                         M22[j, i] = M22[i, j]; M23[j, i] = M23[i, j];
@@ -111,89 +111,35 @@ namespace ClusterLib
 
         public void AddDetermList(Material material)
         {
-            MagneticVector.X = 1 / Math.Sqrt(3);
-            MagneticVector.Y = 1 / Math.Sqrt(3);
-            MagneticVector.Z = 1 / Math.Sqrt(3);
+            MagneticVector = new PointCL(1) / Math.Sqrt(3);
 
-            var atom1 = new Atom();
-            var atom2 = new Atom();
-            var atom3 = new Atom();
-            var atom4 = new Atom();
+            {
+                var atom1 = new Atom (material);
+                atom1.Position = new PointCL (0.5, 0.25, 0.25);
+                atom1.NormalVector = new PointCL (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
+                atom1.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                Atoms.Add (atom1);
 
-            atom1.Material = material;
-            atom2.Material = material;
-            atom3.Material = material;
-            atom4.Material = material;
+                var atom2 = new Atom (material);
+                atom2.Position = new PointCL (-0.25, 0.5, 0.25);
+                atom2.NormalVector = new PointCL (0, 0, 1);
+                atom2.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                Atoms.Add (atom2);
 
-            atom1.Position.X = 0.5;
-            atom1.Position.Y = 0.25;
-            atom1.Position.Z = 0.25;
-            atom1.Material.Radius = 20e-7;
-            atom1.Material.Volume = 4 * Math.PI * atom1.Material.Radius * atom1.Material.Radius * atom1.Material.Radius / 3;
-            atom1.NormalVector.X = 1/Math.Sqrt(2);
-            atom1.NormalVector.Y = 1/Math.Sqrt(2);
-            atom1.NormalVector.Z = 0;
+                var atom3 = new Atom (material);
+                atom3.Position = new PointCL (-0.5, -0.25, 0.25);
+                atom3.NormalVector = new PointCL (1) / Math.Sqrt (3);
+                atom3.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                Atoms.Add (atom3);
 
-            atom1.MagneticVector.X = 1;
-            atom1.MagneticVector.Y = 0;
-            atom1.MagneticVector.Z = 0;
+                var atom4 = new Atom (material);
+                atom4.Position = new PointCL (-0.25, -0.25, -0.25);
+                atom4.NormalVector = new PointCL (0, 0, 1);
+                atom4.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+                Atoms.Add (atom4);
+            }
 
-            atom1.MagneticVector.X = 1 / Math.Sqrt(3);
-            atom1.MagneticVector.Y = 1 / Math.Sqrt(3);
-            atom1.MagneticVector.Z = 1 / Math.Sqrt(3); 
-            Atoms.Add(atom1);
-
-            atom2.Position.X = -0.25;
-            atom2.Position.Y = 0.5;
-            atom2.Position.Z = 0.25;
-            atom2.Material.Radius = 20e-7;
-            atom2.Material.Volume = 4 * Math.PI * atom1.Material.Radius * atom1.Material.Radius * atom1.Material.Radius / 3;
-            atom2.NormalVector.X = 0;
-            atom2.NormalVector.Y = 0;
-            atom2.NormalVector.Z = 1;
-
-            atom2.MagneticVector.X = 0;
-            atom2.MagneticVector.Y = 1;
-            atom2.MagneticVector.Z = 0;
-
-            atom2.MagneticVector.X = 1 / Math.Sqrt(3);
-            atom2.MagneticVector.Y = 1 / Math.Sqrt(3);
-            atom2.MagneticVector.Z = 1 / Math.Sqrt(3);
-            Atoms.Add(atom2);
-
-            atom3.Position.X = -0.5;
-            atom3.Position.Y = -0.25;
-            atom3.Position.Z = 0.25;
-            atom3.Material.Radius = 20e-7;
-            atom3.Material.Volume = 4 * Math.PI * atom1.Material.Radius * atom1.Material.Radius * atom1.Material.Radius / 3;
-            atom3.NormalVector.X = 1 / Math.Sqrt(3);
-            atom3.NormalVector.Y = 1 / Math.Sqrt(3);
-            atom3.NormalVector.Z = 1 / Math.Sqrt(3);
-
-            atom3.MagneticVector.X = 1 / Math.Sqrt(3);
-            atom3.MagneticVector.Y = 1 / Math.Sqrt(3);
-            atom3.MagneticVector.Z = 1 / Math.Sqrt(3);
-            Atoms.Add(atom3);
-
-            atom4.Position.X = -0.25;
-            atom4.Position.Y = -0.25;
-            atom4.Position.Z = -0.25;
-            atom4.Material.Radius = 20e-7;
-            atom4.Material.Volume = 4 * Math.PI * atom1.Material.Radius * atom1.Material.Radius * atom1.Material.Radius / 3;
-            atom4.NormalVector.X = 0;
-            atom4.NormalVector.Y = 0;
-            atom4.NormalVector.Z = 1;
-          
-
-            atom4.MagneticVector.X = 1 / Math.Sqrt(3);
-            atom4.MagneticVector.Y = 1 / Math.Sqrt(3);
-            atom4.MagneticVector.Z = 1 / Math.Sqrt(3);
-            Atoms.Add(atom4);            
-        
-            Hd_num = Atoms[0].Material.Volume * Atoms[0].Material.Ms / Math.Pow(Radius, 3);
-
-            double nRx, nRy, nRz;
-            double Rd, Rd2 = 0, Rd3;
+            Hd_num = material.Volume * material.Ms / Math.Pow(Radius, 3);
 
             M11 = new double[Atoms.Count, Atoms.Count];
             M12 = new double[Atoms.Count, Atoms.Count];
@@ -208,22 +154,22 @@ namespace ClusterLib
                 {
                     if (i != j)
                     {
-                        Rd2 = (Atoms[i].Position.X - Atoms[j].Position.X) * (Atoms[i].Position.X - Atoms[j].Position.X) +
-                            (Atoms[i].Position.Y - Atoms[j].Position.Y) * (Atoms[i].Position.Y - Atoms[j].Position.Y) +
-                            (Atoms[i].Position.Z - Atoms[j].Position.Z) * (Atoms[i].Position.Z - Atoms[j].Position.Z);
-                        Rd = Math.Sqrt(Rd2);
-                        Rd3 = Rd * Rd2;
+                        var atom1 = Atoms [i];
+                        var atom2 = Atoms [j];
 
-                        nRx = (Atoms[i].Position.X - Atoms[j].Position.X) / Rd;
-                        nRy = (Atoms[i].Position.Y - Atoms[j].Position.Y) / Rd;
-                        nRz = (Atoms[i].Position.Z - Atoms[j].Position.Z) / Rd;
+                        var diff = atom1.Position - atom2.Position;
 
-                        M11[i, j] = (1 - 3 * nRx * nRx) / Rd3; 
-                        M12[i, j] = -3 * nRx * nRy / Rd3; 
-                        M13[i, j] = -3 * nRx * nRz / Rd3;
-                        M22[i, j] = (1 - 3 * nRy * nRy) / Rd3; 
-                        M23[i, j] = -3 * nRy * nRz / Rd3;
-                        M33[i, j] = (1 - 3 * nRz * nRz) / Rd3;
+                        var distance = diff.mod();
+                        var distanceCube = Math.Pow (distance, 3);
+
+                        var nR = diff / distance;
+
+                        M11[i, j] = (1 - 3 * nR.X * nR.X) / distanceCube;
+                        M12[i, j] = -3 * nR.X * nR.Y / distanceCube;
+                        M13[i, j] = -3 * nR.X * nR.Z / distanceCube;
+                        M22[i, j] = (1 - 3 * nR.Y * nR.Y) / distanceCube;
+                        M23[i, j] = -3 * nR.Y * nR.Z / distanceCube;
+                        M33[i, j] = (1 - 3 * nR.Z * nR.Z) / distanceCube;
 
                         M11[j, i] = M11[i, j]; M12[j, i] = M12[i, j]; M13[j, i] = M13[i, j];
                         M22[j, i] = M22[i, j]; M23[j, i] = M23[i, j];
@@ -237,103 +183,80 @@ namespace ClusterLib
 
         public void AddDetermListOne(Material material)
         {
-            MagneticVector.X = 1 / Math.Sqrt(3);
-            MagneticVector.Y = 1 / Math.Sqrt(3);
-            MagneticVector.Z = 1 / Math.Sqrt(3);
+            MagneticVector = new PointCL(1) / Math.Sqrt(3);
 
-            var atom1 = new Atom();         
-
-            atom1.Material = material;            
-
-            atom1.Position.X = 0.5;
-            atom1.Position.Y = 0.25;
-            atom1.Position.Z = 0.25;
-            atom1.Material.Radius = 20e-7;
-            atom1.Material.Volume = 4 * Math.PI * atom1.Material.Radius * atom1.Material.Radius * atom1.Material.Radius / 3;
-            atom1.NormalVector.X = 1;
-            atom1.NormalVector.Y = 0;
-            atom1.NormalVector.Z = 0;            
-
-            atom1.MagneticVector.X = 1 / Math.Sqrt(3);
-            atom1.MagneticVector.Y = 1 / Math.Sqrt(3);
-            atom1.MagneticVector.Z = 1 / Math.Sqrt(3);
-            Atoms.Add(atom1);
+            var atom1 = new Atom (material);
+            atom1.Position = new PointCL (0.5, 0.25, 0.25);
+            atom1.NormalVector = new PointCL (1, 0, 0);
+            atom1.MagneticVector = new PointCL (1) / Math.Sqrt (3);
+            Atoms.Add (atom1);
         }
 
         public void calculateOne(double h, double step)
         {
-            double sSum;
-
             for (double i = h; i >= -h; i = i - step)
             {
-                var res = new Result();
-                sSum = 0;
-                res.U = i;
+                double sum = 0;
 
-                PointCL H0cur;
-                H0cur.X = i * MagneticVector.X;
-                H0cur.Y = i * MagneticVector.Y;
-                H0cur.Z = i * MagneticVector.Z;
+                var H0cur = MagneticVector * i;
 
                 double rave;
-                do
+                while(true)
                 {
                     CountH(H0cur);
                     MakeStep();
                     rave = CountForce();
-                } while (rave > MagneticField.EpsR);
 
-
-                for (int j = 0; j < Atoms.Count; j++)
-                {
-                    sSum = sSum + Atoms[j].MagneticVector.X * MagneticVector.X + Atoms[j].MagneticVector.Y * 
-                        MagneticVector.Y + Atoms[j].MagneticVector.Z * MagneticVector.Z;
-
+                    if (rave <= MagneticField.EpsR)
+                    {
+                        break;
+                    }
                 }
-                res.R = sSum / Atoms.Count;
 
-                Result1.Add(res);
-                Result2.Add(-res);
+                Atoms.ForEach (a => {
+                    var v = a.MagneticVector * MagneticVector;
+                    sum += v.X + v.Y + v.Z;
+                });
+
+                Result.Add(new Result(i, sum / Atoms.Count));
             }           
         }
 
         public void calculate(double H, double step)
         {
-            double SSum;
-            const int MaxIter = 10000;
+            const int maxIterCount = 10000;
 
             for (double i = H; i >= -H; i=i-step )
             {
-                var res = new Result();
-                SSum = 0;
-                res.U = i;
+                double sum = 0;
              
-                PointCL H0cur;
-                H0cur.X = i * MagneticVector.X;
-                H0cur.Y = i * MagneticVector.Y;
-                H0cur.Z = i * MagneticVector.Z;
+                var H0cur = MagneticVector * i;
 
                 double rave;
-                int Niter = 0;
-                do
+                int iterCount = 0;
+
+                while(true)
                 {
                     CountH(H0cur);
                     MakeStep();
                     rave = CountForce();
-                    Niter++;
-                } while ((rave > MagneticField.EpsR)||(MaxIter!=Niter));
 
+                    if (++iterCount >= maxIterCount) {
+                        break;
+                    }
 
-                for (int j = 0; j < Atoms.Count; j++)
-                {
-                    SSum = SSum + Atoms[j].MagneticVector.X * MagneticVector.X + Atoms[j].MagneticVector.Y * 
-                        MagneticVector.Y + Atoms[j].MagneticVector.Z *  MagneticVector.Z;
-               
+                    if (rave <= MagneticField.EpsR)
+                    {
+                        break;
+                    }
                 }
-                res.R = SSum / Atoms.Count;            
-                
-                Result1.Add(res);
-                Result2.Add(-res);
+
+                Atoms.ForEach (a => {
+                    var v = a.MagneticVector * MagneticVector;
+                    sum += v.X + v.Y + v.Z;
+                });
+
+                Result.Add(new Result(i, sum / Atoms.Count));
             }           
         }
 

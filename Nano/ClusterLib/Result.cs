@@ -1,17 +1,20 @@
 ﻿
 namespace ClusterLib
 {
-    public class Result
+    public struct Result
     {
-        public double U;
-        public double R;
+        public double U { get;set; }
+        public double R { get;set; }
 
-        public static Result operator -(Result R)
+        public Result(double u, double r)
         {
-            var RN = new Result();
-            RN.R = -R.R;
-            RN.U = -R.U;
-            return RN;            
+            U = u;
+            R = r;
+        }
+
+        public static Result operator -(Result that)
+        {
+            return new Result(-that.R, -that.U);            
         }
     }
 }

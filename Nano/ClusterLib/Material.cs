@@ -4,12 +4,12 @@ namespace ClusterLib
 {
     public class Material
     {
-        public double K1;   //{uniaxial anisotropy constant}
-        public double Ms;   //{500, 1400 emu/cm3}
-        public double Hk;
-        public double Diametr;
-        public double Radius;
-        public double Volume;    
+        public double K1 { get; }   //{uniaxial anisotropy constant}
+        public double Ms { get; }   //{500, 1400 emu/cm3}
+        public double Hk { get; } 
+        public double Diametr { get; }
+        public double Radius { get; }
+        public double Volume { get; }
 
         public Material(double _K1, double _Ms, double _Radius)
         {
