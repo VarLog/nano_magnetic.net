@@ -67,8 +67,6 @@ namespace ClusterLib
                         {
                             throw new Exception( "All particles must have the same material" );
                         }
-
-                        calculateDistinations();
                     }
 
                     particles.ForEach( p => p.MagneticVector = MagneticField.MagneticVector );
@@ -182,6 +180,8 @@ namespace ClusterLib
             {
                 throw new Exception( "There are not any particles to calculate" );
             }
+
+            calculateDistinations();
 
             const int maxIterCount = 10000;
 
