@@ -131,8 +131,6 @@ namespace ClusterLib
             mat23 = new double[ParticlesCount, ParticlesCount];
             mat33 = new double[ParticlesCount, ParticlesCount];
 
-            Particles.ForEach (a => a.Position = a.Position / Radius);
-
             for (int i = 0; i < ParticlesCount; i++)
             {
                 for (int j = 0; j < ParticlesCount; j++)

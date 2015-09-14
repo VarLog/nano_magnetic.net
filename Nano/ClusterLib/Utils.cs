@@ -61,6 +61,9 @@ namespace ClusterLib
 
                 res.Add (particle);
             }
+
+            res.ForEach (p => p.Position = p.Position / radius);
+
             return res;
         }
 
