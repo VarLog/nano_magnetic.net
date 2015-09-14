@@ -33,6 +33,7 @@ namespace ClusterLib
         /// Magnetic anisotropy is the directional dependence of a material's magnetic properties. 
         /// The magnetic moment of magnetically anisotropic materials will tend to align with an "easy axis", 
         /// which is an energetically favorable direction of spontaneous magnetization.
+        /// \f$M_a\f$
         /// </summary>
         /// <see href="https://en.wikipedia.org/wiki/Magnetic_anisotropy"/>
         /// <value>The magnetic anisotropy.</value>
@@ -44,6 +45,7 @@ namespace ClusterLib
         /// density B more or less levels off. (It continues to increase very slowly due to the vacuum permeability.) 
         /// Saturation is a characteristic of ferromagnetic and ferrimagnetic materials, such as 
         /// iron, nickel, cobalt and their alloys.
+        /// \f$M_s\f$
         /// </summary>
         /// <seealso href="https://en.wikipedia.org/wiki/Saturation_(magnetic)"/>
         /// <value>The magnetic saturation.</value>
@@ -52,24 +54,21 @@ namespace ClusterLib
         /// <summary>
         /// Magnetic damping is a form of damping that occurs when a magnetic field moves through a conductor 
         /// (or vice versa).
+        /// \f$H_d\f$
         /// </summary>
         /// <value>The magnetic damping.</value>
         public double MagneticDamping { get; }
 
         /// <summary>
         /// The radius of the particle of this material.
+        /// \f$R\f$
         /// </summary>
         /// <value>The radius.</value>
         public double Radius { get; }
 
         /// <summary>
-        /// The diametr of the particle of this material.
-        /// </summary>
-        /// <value>The diametr.</value>
-        public double Diametr { get; }
-
-        /// <summary>
         /// The volume of the particle of this material.
+        /// \f$V\f$
         /// </summary>
         /// <value>The volume.</value>
         public double Volume { get; }
@@ -88,8 +87,7 @@ namespace ClusterLib
             MagneticDamping = 2 * MagneticAnisotropy / MagneticSaturation;
 
             Radius = radius;
-            Diametr = 2 * radius;
-            Volume = 4 * Math.PI * Math.Pow (Radius, 3) / 3;
+            Volume = (4 / 3) * Math.PI * Math.Pow (Radius, 3);
         }
     }
 }

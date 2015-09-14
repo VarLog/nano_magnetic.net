@@ -29,12 +29,27 @@ namespace ClusterLib
 {
     public struct Vector
     {
+        /// <summary>
+        /// Gets or sets the x.
+        /// </summary>
+        /// <value>The x.</value>
         public double X { set; get; }
 
+        /// <summary>
+        /// Gets or sets the y.
+        /// </summary>
+        /// <value>The y.</value>
         public double Y { set; get; }
 
+        /// <summary>
+        /// Gets or sets the z.
+        /// </summary>
+        /// <value>The z.</value>
         public double Z { set; get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
+        /// </summary>
         public Vector ()
         {
             X = default(double);
@@ -42,11 +57,21 @@ namespace ClusterLib
             Z = default(double);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
+        /// </summary>
+        /// <param name="value">Value for X, Y and for Z.</param>
         public Vector (double value)
         {
             X = Y = Z = value;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        /// <param name="z">The z coordinate.</param>
         public Vector (double x, double y, double z)
         {
             X = x;
@@ -57,12 +82,14 @@ namespace ClusterLib
         /// <summary>
         /// Module (distance) of Vector instance.
         /// </summary>
-        /// <returns>Scalar</returns>
         public double mod ()
         {
             return Math.Sqrt (square ());
         }
 
+        /// <summary>
+        /// Square of the module (distance) of the Vector instance.
+        /// </summary>
         public double square ()
         {
             return X * X + Y * Y + Z * Z;
@@ -72,7 +99,6 @@ namespace ClusterLib
         /// Dot product of two vector: this and that.
         /// </summary>
         /// <param name="that">Another Vector</param>
-        /// <returns>Scalar</returns>
         public double dot (Vector that)
         {
             return X * that.X + Y * that.Y + Z * that.Z;

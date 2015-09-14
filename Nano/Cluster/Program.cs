@@ -59,14 +59,15 @@ namespace Cluster
 
             const double clusterRadius = 80e-7;
 
-            //var cluster = new Sphere (clusterRadius, magnetic);
-            //cluster.AddAtomList(material, 20);
-
             var cluster = new Sphere (clusterRadius, magnetic);
-            cluster.AddDetermList (material);
+            cluster.Particles = Utils.GetDetermParticles (material);
 
+            //const int particlesCount = 20;
+            //cluster.Particles = Utils.GenerateRandromParticlesInSphere (material, clusterRadius, particlesCount);
 
-            cluster.calculate (1500, 300);
+            var rangeH = new [] { -1500, 1500 };
+            const int step = 300;
+            cluster.calculate (rangeH, step);
 
             Console.WriteLine ("Results:");
             cluster.Result.ForEach (r => Console.WriteLine ("U: " + r.U + " R: " + r.R));
