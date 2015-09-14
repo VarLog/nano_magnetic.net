@@ -27,6 +27,7 @@ using System;
 using System.Diagnostics;
 
 using ClusterLib;
+using System.Collections.Generic;
 
 namespace Cluster
 {
@@ -52,15 +53,14 @@ namespace Cluster
 //                    2 * (R.NextDouble () - 0.5));
 //                magnetic.MagneticVector = randVector;
 //            }
-
-            magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);
+            magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);            
 
 
             //var cluster = new Sphere (radius, magneticVector);
             //cluster.AddAtomList(material, 20);
 
             var cluster = new Sphere (radius, magnetic);
-            cluster.AddDetermList (material);
+            cluster.AddDetermAtoms(material);
 
                 
             cluster.calculate (1500, 300);

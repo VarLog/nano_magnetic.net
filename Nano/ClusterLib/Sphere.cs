@@ -31,27 +31,35 @@ namespace ClusterLib
 {
     public class Sphere
     {
+        #region Var
+
         readonly public Magnetic MagneticField;
 
-        readonly public double Radius;
+        internal double Radius;
 
         readonly public List<Result> Result = new List<Result> ();
 
         readonly List<Atom> atoms = new List<Atom> ();
 
         double Hd;
-
+        
         /// <summary>
         /// Distanation matrixes.
         /// </summary>
         double[,] mat11, mat12, mat13, mat22, mat23, mat33;
 
+        #endregion
+
+        #region Constructors
         public Sphere (double radius, Magnetic magneticField)
         {
             Radius = radius;
             MagneticField = magneticField;
         }
 
+        #endregion
+
+        #region Logik
         void createRandromAtoms (Material material, int count)
         {
             var R = new Random ();
@@ -78,11 +86,32 @@ namespace ClusterLib
             }
         }
 
+        /// <summary>
+        /// Создает случайное количество атомов в кластере
+        /// </summary>
+        /// <param name="material">Material</param>
+        /// <param name="count">Количество атомов</param>
         public void GeneretaAtoms (Material material, int count)
         {
-            createRandromAtoms (material, count);
+            GenerateAtomsList(material, count);
+        }
 
-            Hd = material.Volume * material.Ms / Math.Pow (Radius, 3);
+        /// <summary>
+        /// Создает случайное количество атомов в кластере по параметру плотности
+        /// </summary>
+        /// <param name="material">Материал</param>
+        /// <param name="ETA">Плотность клайстера</param>
+        public void GeneretaAtoms(Material material, int count, double ETA)
+        {
+            this.Radius = count * material.Radius / ETA;
+            GenerateAtomsList(material, count);
+        }
+
+        private void GenerateAtomsList(Material material, int count)
+        {
+            createRandromAtoms(material, count);
+
+            Hd = material.Volume * material.Ms / Math.Pow(Radius, 3);
 
             var atomsCount = atoms.Count;
             mat11 = new double[atomsCount, atomsCount];
@@ -92,7 +121,7 @@ namespace ClusterLib
             mat23 = new double[atomsCount, atomsCount];
             mat33 = new double[atomsCount, atomsCount];
 
-            atoms.ForEach (a => a.Position = a.Position / Radius);
+            atoms.ForEach(a => a.Position = a.Position / Radius);
 
             for (int i = 0; i < atoms.Count; i++)
             {
@@ -103,61 +132,60 @@ namespace ClusterLib
                         continue;
                     }
 
-                    var atom1 = atoms [i];
-                    var atom2 = atoms [j];
+                    var atom1 = atoms[i];
+                    var atom2 = atoms[j];
 
                     var diff = atom1.Position - atom2.Position;
 
-                    var distance = diff.mod ();
-                    var distanceCube = Math.Pow (distance, 3);
+                    var distance = diff.mod();
+                    var distanceCube = Math.Pow(distance, 3);
 
                     var nR = diff / distance;
 
-                    mat11 [i, j] = (1 - 3 * nR.X * nR.X) / distanceCube;
-                    mat12 [i, j] = -3 * nR.X * nR.Y / distanceCube;
-                    mat13 [i, j] = -3 * nR.X * nR.Z / distanceCube;
-                    mat22 [i, j] = (1 - 3 * nR.Y * nR.Y) / distanceCube;
-                    mat23 [i, j] = -3 * nR.Y * nR.Z / distanceCube;
-                    mat33 [i, j] = (1 - 3 * nR.Z * nR.Z) / distanceCube;
+                    mat11[i, j] = (1 - 3 * nR.X * nR.X) / distanceCube;
+                    mat12[i, j] = -3 * nR.X * nR.Y / distanceCube;
+                    mat13[i, j] = -3 * nR.X * nR.Z / distanceCube;
+                    mat22[i, j] = (1 - 3 * nR.Y * nR.Y) / distanceCube;
+                    mat23[i, j] = -3 * nR.Y * nR.Z / distanceCube;
+                    mat33[i, j] = (1 - 3 * nR.Z * nR.Z) / distanceCube;
 
-                    mat11 [j, i] = mat11 [i, j];
-                    mat12 [j, i] = mat12 [i, j];
-                    mat13 [j, i] = mat13 [i, j];
-                    mat22 [j, i] = mat22 [i, j];
-                    mat23 [j, i] = mat23 [i, j];
-                    mat33 [j, i] = mat33 [i, j];
+                    mat11[j, i] = mat11[i, j];
+                    mat12[j, i] = mat12[i, j];
+                    mat13[j, i] = mat13[i, j];
+                    mat22[j, i] = mat22[i, j];
+                    mat23[j, i] = mat23[i, j];
+                    mat33[j, i] = mat33[i, j];
                 }
             }
         }
 
-        public void AddDetermList (Material material)
+        public void AddDetermAtoms(Material material)
         {
             {
-                var atom1 = new Atom (material);
-                atom1.Position = new Vector (0.5, 0.25, 0.25);
-                atom1.NormalVector = new Vector (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
-                atom1.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom1);
+                var atom1 = new Atom(material);
+                atom1.Position = new Vector(0.5, 0.25, 0.25);
+                atom1.NormalVector = new Vector(1 / Math.Sqrt(2), 1 / Math.Sqrt(2), 0);
+                atom1.MagneticVector = new Vector(1) / Math.Sqrt(3);
+                atoms.Add(atom1);
 
-                var atom2 = new Atom (material);
-                atom2.Position = new Vector (-0.25, 0.5, 0.25);
-                atom2.NormalVector = new Vector (0, 0, 1);
-                atom2.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom2);
+                var atom2 = new Atom(material);
+                atom2.Position = new Vector(-0.25, 0.5, 0.25);
+                atom2.NormalVector = new Vector(0, 0, 1);
+                atom2.MagneticVector = new Vector(1) / Math.Sqrt(3);
+                atoms.Add(atom2);
 
-                var atom3 = new Atom (material);
-                atom3.Position = new Vector (-0.5, -0.25, 0.25);
-                atom3.NormalVector = new Vector (1) / Math.Sqrt (3);
-                atom3.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom3);
+                var atom3 = new Atom(material);
+                atom3.Position = new Vector(-0.5, -0.25, 0.25);
+                atom3.NormalVector = new Vector(1) / Math.Sqrt(3);
+                atom3.MagneticVector = new Vector(1) / Math.Sqrt(3);
+                atoms.Add(atom3);
 
-                var atom4 = new Atom (material);
-                atom4.Position = new Vector (-0.25, -0.25, -0.25);
-                atom4.NormalVector = new Vector (0, 0, 1);
-                atom4.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom4);
-            }
-
+                var atom4 = new Atom(material);
+                atom4.Position = new Vector(-0.25, -0.25, -0.25);
+                atom4.NormalVector = new Vector(0, 0, 1);
+                atom4.MagneticVector = new Vector(1) / Math.Sqrt(3);
+                atoms.Add(atom4);
+            }   
             Hd = material.Volume * material.Ms / Math.Pow (Radius, 3);
 
             var atomsCount = atoms.Count;
@@ -225,7 +253,13 @@ namespace ClusterLib
                 double rave;
                 while (true)
                 {
-                    CountH (H0cur);
+                    {   //CountH
+                        var atom = atoms[0];
+                        var sp = atom.MagneticVector.dot(atom.NormalVector);
+                        var Ha = atom.NormalVector * sp * atom.Material.Hk;
+                        atom.Hr = Ha + H0cur; 
+                    }
+
                     MakeStep ();
                     rave = CountForce ();
 
@@ -244,6 +278,11 @@ namespace ClusterLib
             }           
         }
 
+        /// <summary>
+        /// решения уравнения Ландау-Лифшеца-Гильберта
+        /// </summary>
+        /// <param name="H">Максимальное магнитное поле</param>
+        /// <param name="step">Шаг по полю</param>
         public void calculate (double H, double step)
         {
             const int maxIterCount = 10000;
@@ -281,7 +320,8 @@ namespace ClusterLib
 
                 Result.Add (new Result (i, sum / atoms.Count));
             }           
-        }
+        }       
+
 
         public Vector CountHdip (int j)
         {
@@ -383,5 +423,7 @@ namespace ClusterLib
 
             return rave;
         }
+        #endregion
+     
     }
 }
