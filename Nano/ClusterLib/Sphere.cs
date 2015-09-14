@@ -121,7 +121,7 @@ namespace ClusterLib
             // TODO: Old implementation. It sould be discussed. 
             ParticlesDensity = ParticlesMaterial.Volume * ParticlesMaterial.MagneticSaturation / Math.Pow (Radius, 3);
 
-            //var volume = (4 / 3) * Math.PI * Math.Pow (Radius, 3);
+            //var volume = (4.0 / 3.0) * Math.PI * Math.Pow (Radius, 3);
             //ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
 
             Console.WriteLine ("Particles density h == " + ParticlesDensity);
