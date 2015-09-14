@@ -113,6 +113,9 @@ namespace ClusterLib
             MagneticField = magneticField;
         }
 
+        /// <summary>
+        /// Calculates the distinations between particles.
+        /// </summary>
         void calculateDistinations ()
         {
             // TODO: Old implementation. It sould be discussed. 
@@ -167,6 +170,11 @@ namespace ClusterLib
             }
         }
 
+        /// <summary>
+        /// Calculate the Landau–Lifshitz–Gilbert equation.
+        /// </summary>
+        /// <param name="magneticIntensityRange">Magnetic intensity range.</param>
+        /// <param name="step">Step.</param>
         public void calculate (IEnumerable<int> magneticIntensityRange, double step)
         {
             if (Particles == null || !Particles.Any ())
