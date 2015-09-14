@@ -87,7 +87,7 @@ namespace ClusterLib
             MagneticDamping = 2 * MagneticAnisotropy / MagneticSaturation;
 
             Radius = radius;
-            Volume = (4 / 3) * Math.PI * Math.Pow (Radius, 3);
+            Volume = (4.0 / 3.0) * Math.PI * Math.Pow (Radius, 3);
         }
     }
 }
