@@ -34,9 +34,10 @@ namespace Cluster
     {
         static void Main (string[] args)
         {
-            var material = new Material (40000, 500, 20e-7);
-
-            const double radius = 80e-7;
+            const double anisotropy = 40000;
+            const double saturation = 500;
+            const double particleRadius = 20e-7;
+            var material = new Material (anisotropy, saturation, particleRadius);
 
 
             var magnetic = new Magnetic ();
@@ -45,6 +46,7 @@ namespace Cluster
             magnetic.stabkoeff = 30;
             magnetic.EpsR = 1e-12;
 
+            // Random MagneticVector
 //            {
 //                var R = new Random ();
 //                var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
@@ -52,20 +54,22 @@ namespace Cluster
 //                    2 * (R.NextDouble () - 0.5));
 //                magnetic.MagneticVector = randVector;
 //            }
-
             magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);
 
 
-            //var cluster = new Sphere (radius, magneticVector);
+            const double clusterRadius = 80e-7;
+
+            //var cluster = new Sphere (clusterRadius, magnetic);
             //cluster.AddAtomList(material, 20);
 
-            var cluster = new Sphere (radius, magnetic);
+            var cluster = new Sphere (clusterRadius, magnetic);
             cluster.AddDetermList (material);
 
-                
+
             cluster.calculate (1500, 300);
 
-            cluster.Result.ForEach (r => Debug.WriteLine ("U: " + r.U + " R: " + r.R));
+            Console.WriteLine ("Results:");
+            cluster.Result.ForEach (r => Console.WriteLine ("U: " + r.U + " R: " + r.R));
         }
     }
 }

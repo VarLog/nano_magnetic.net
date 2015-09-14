@@ -27,7 +27,7 @@ using System;
 
 namespace ClusterLib
 {
-    public class Atom
+    public class Particle
     {
         #region Parametrs
 
@@ -45,7 +45,7 @@ namespace ClusterLib
 
         #region Constructors
 
-        public Atom (Material material)
+        public Particle (Material material)
         {
             Material = material;
         }
@@ -64,7 +64,7 @@ namespace ClusterLib
             NormalVector = NormalVector / NormalVector.mod ();
         }
 
-        public bool isIntersected (Atom that)
+        public bool isIntersected (Particle that)
         {
             var diff = Position - that.Position;
             var distance = diff.mod ();

@@ -37,9 +37,11 @@ namespace ClusterLib
 
         readonly public List<Result> Result = new List<Result> ();
 
-        readonly List<Atom> atoms = new List<Atom> ();
+        readonly List<Particle> particles = new List<Particle> ();
 
-        double Hd;
+        public int ParticulesCount { get { return particles.Count; } }
+
+        public double ParticlesDensity { get; private set; }
 
         /// <summary>
         /// Distanation matrixes.
@@ -52,39 +54,40 @@ namespace ClusterLib
             MagneticField = magneticField;
         }
 
-        void createRandromAtoms (Material material, int count)
+        void createRandromParticles (Material material, int count)
         {
             var R = new Random ();
 
             for (int i = 0; i < count; i++)
             {
-                var atom = new Atom (material);
+                var particle = new Particle (material);
 
                 var randPosition = new Vector ((R.NextDouble () - 0.5) * Radius, 
                                        (R.NextDouble () - 0.5) * Radius, 
                                        (R.NextDouble () - 0.5) * Radius);
-                atom.Position = randPosition;
+                particle.Position = randPosition;
 
-                bool isIntersected = atoms.Any (atom.isIntersected);
+                bool isIntersected = particles.Any (particle.isIntersected);
                 if (isIntersected)
                 {
                     i--;
                     continue;
                 }
 
-                atoms.Add (atom);
-                atom.GenNormalVector ();
-                atom.MagneticVector = MagneticField.MagneticVector;
+                particles.Add (particle);
+                particle.GenNormalVector ();
+                particle.MagneticVector = MagneticField.MagneticVector;
             }
         }
 
-        public void GeneretaAtoms (Material material, int count)
+        public void GenereteParticles (Material material, int count)
         {
-            createRandromAtoms (material, count);
+            createRandromParticles (material, count);
 
-            Hd = material.Volume * material.Ms / Math.Pow (Radius, 3);
+            ParticlesDensity = material.Volume * material.MagneticSaturation / Math.Pow (Radius, 3);
+            Console.WriteLine ("Particles density h == " + ParticlesDensity);
 
-            var atomsCount = atoms.Count;
+            var atomsCount = particles.Count;
             mat11 = new double[atomsCount, atomsCount];
             mat12 = new double[atomsCount, atomsCount];
             mat13 = new double[atomsCount, atomsCount];
@@ -92,19 +95,19 @@ namespace ClusterLib
             mat23 = new double[atomsCount, atomsCount];
             mat33 = new double[atomsCount, atomsCount];
 
-            atoms.ForEach (a => a.Position = a.Position / Radius);
+            particles.ForEach (a => a.Position = a.Position / Radius);
 
-            for (int i = 0; i < atoms.Count; i++)
+            for (int i = 0; i < particles.Count; i++)
             {
-                for (int j = 0; j < atoms.Count; j++)
+                for (int j = 0; j < particles.Count; j++)
                 {
                     if (i == j)
                     {
                         continue;
                     }
 
-                    var atom1 = atoms [i];
-                    var atom2 = atoms [j];
+                    var atom1 = particles [i];
+                    var atom2 = particles [j];
 
                     var diff = atom1.Position - atom2.Position;
 
@@ -133,34 +136,34 @@ namespace ClusterLib
         public void AddDetermList (Material material)
         {
             {
-                var atom1 = new Atom (material);
+                var atom1 = new Particle (material);
                 atom1.Position = new Vector (0.5, 0.25, 0.25);
                 atom1.NormalVector = new Vector (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
                 atom1.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom1);
+                particles.Add (atom1);
 
-                var atom2 = new Atom (material);
+                var atom2 = new Particle (material);
                 atom2.Position = new Vector (-0.25, 0.5, 0.25);
                 atom2.NormalVector = new Vector (0, 0, 1);
                 atom2.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom2);
+                particles.Add (atom2);
 
-                var atom3 = new Atom (material);
+                var atom3 = new Particle (material);
                 atom3.Position = new Vector (-0.5, -0.25, 0.25);
                 atom3.NormalVector = new Vector (1) / Math.Sqrt (3);
                 atom3.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom3);
+                particles.Add (atom3);
 
-                var atom4 = new Atom (material);
+                var atom4 = new Particle (material);
                 atom4.Position = new Vector (-0.25, -0.25, -0.25);
                 atom4.NormalVector = new Vector (0, 0, 1);
                 atom4.MagneticVector = new Vector (1) / Math.Sqrt (3);
-                atoms.Add (atom4);
+                particles.Add (atom4);
             }
 
-            Hd = material.Volume * material.Ms / Math.Pow (Radius, 3);
+            ParticlesDensity = material.Volume * material.MagneticSaturation / Math.Pow (Radius, 3);
 
-            var atomsCount = atoms.Count;
+            var atomsCount = particles.Count;
             mat11 = new double[atomsCount, atomsCount];
             mat12 = new double[atomsCount, atomsCount];
             mat13 = new double[atomsCount, atomsCount];
@@ -168,17 +171,17 @@ namespace ClusterLib
             mat23 = new double[atomsCount, atomsCount];
             mat33 = new double[atomsCount, atomsCount];
 
-            for (int i = 0; i < atoms.Count; i++)
+            for (int i = 0; i < particles.Count; i++)
             {
-                for (int j = 0; j < atoms.Count; j++)
+                for (int j = 0; j < particles.Count; j++)
                 {
                     if (i == j)
                     {
                         continue;
                     }
 
-                    var atom1 = atoms [i];
-                    var atom2 = atoms [j];
+                    var atom1 = particles [i];
+                    var atom2 = particles [j];
 
                     var diff = atom1.Position - atom2.Position;
 
@@ -207,11 +210,11 @@ namespace ClusterLib
 
         public void AddDetermListOne (Material material)
         {
-            var atom1 = new Atom (material);
+            var atom1 = new Particle (material);
             atom1.Position = new Vector (0.5, 0.25, 0.25);
             atom1.NormalVector = new Vector (1, 0, 0);
             atom1.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            atoms.Add (atom1);
+            particles.Add (atom1);
         }
 
         public void calculateOne (double h, double step)
@@ -235,12 +238,12 @@ namespace ClusterLib
                     }
                 }
 
-                atoms.ForEach (a => {
+                particles.ForEach (a => {
                     var v = a.MagneticVector * MagneticField.MagneticVector;
                     sum += v.X + v.Y + v.Z;
                 });
 
-                Result.Add (new Result (i, sum / atoms.Count));
+                Result.Add (new Result (i, sum / particles.Count));
             }           
         }
 
@@ -274,12 +277,12 @@ namespace ClusterLib
                     }
                 }
 
-                atoms.ForEach (a => {
+                particles.ForEach (a => {
                     var v = a.MagneticVector * MagneticField.MagneticVector;
                     sum += v.X + v.Y + v.Z;
                 });
 
-                Result.Add (new Result (i, sum / atoms.Count));
+                Result.Add (new Result (i, sum / particles.Count));
             }           
         }
 
@@ -287,11 +290,11 @@ namespace ClusterLib
         {
             var HM = new Vector ();
                 
-            for (int i = 0; i < atoms.Count; i++)
+            for (int i = 0; i < particles.Count; i++)
             {
                 if (i != j)
                 {
-                    var atom = atoms [i];
+                    var atom = particles [i];
                     var magneticVector = atom.MagneticVector;
 
                     HM.X = HM.X + mat11 [j, i] * magneticVector.X +
@@ -312,17 +315,17 @@ namespace ClusterLib
 
         public void CountH (Vector h0cur)
         {
-            for (int i = 0; i < atoms.Count; i++)
+            for (int i = 0; i < particles.Count; i++)
             {
-                var atom = atoms [i];
+                var atom = particles [i];
 
                 var sp = atom.MagneticVector.dot (atom.NormalVector);
 
-                var Ha = atom.NormalVector * sp * atom.Material.Hk;
+                var Ha = atom.NormalVector * sp * atom.Material.MagneticDamping;
 
                 var HM = CountHdip (i);
 
-                var Hi = HM * -Hd;
+                var Hi = HM * -ParticlesDensity;
 
                 atom.Hr = Ha + Hi + h0cur;
             }
@@ -330,13 +333,13 @@ namespace ClusterLib
 
         public void MakeStep ()
         {
-            var Hrs = atoms.ConvertAll (a => a.Hr.mod ());
+            var Hrs = particles.ConvertAll (a => a.Hr.mod ());
             double maxHr = Hrs.Max ();
 
             var dt = MagneticField.stabkoeff * Math.PI /
                      (30 * maxHr * (1 + MagneticField.Stc) * (1 + MagneticField.kappa * MagneticField.kappa));
 
-            foreach (var atom in atoms)
+            foreach (var atom in particles)
             {
                 Vector Calc;
                 Calc = atom.MagneticVector;
@@ -364,7 +367,7 @@ namespace ClusterLib
 
             double rave = 0;
 
-            foreach (var atom in atoms)
+            foreach (var atom in particles)
             {
                 var v = new Vector ();
                 v.X = atom.Hr.Y * atom.MagneticVector.Z - atom.Hr.Z * atom.MagneticVector.Y;
@@ -379,7 +382,7 @@ namespace ClusterLib
 
                 rave += Math.Abs (x);
             }
-            rave = rave / atoms.Count;
+            rave = rave / particles.Count;
 
             return rave;
         }
