@@ -36,33 +36,33 @@ namespace ClusterLib
         /// <param name="material">Particles material.</param>
         /// <param name="radius">The radius of the sphere.</param>
         /// <param name="count">Particles count.</param>
-        public static List<Particle> GenerateRandromParticlesInSphere (Material material, double radius, int count)
+        public static List<Particle> GenerateRandromParticlesInSphere( Material material, double radius, int count )
         {
-            var res = new List<Particle> ();
+            var res = new List<Particle>();
 
-            var rand = new Random ();
+            var rand = new Random();
 
-            for (int i = 0; i < count; i++)
+            for( int i = 0; i < count; i++ )
             {
-                var particle = new Particle (material);
+                var particle = new Particle( material );
 
-                var randPosition = new Vector ((rand.NextDouble () - 0.5) * radius, 
-                                       (rand.NextDouble () - 0.5) * radius, 
-                                       (rand.NextDouble () - 0.5) * radius);
+                var randPosition = new Vector( ( rand.NextDouble() - 0.5 ) * radius, 
+                                       ( rand.NextDouble() - 0.5 ) * radius, 
+                                       ( rand.NextDouble() - 0.5 ) * radius );
                 particle.Position = randPosition;
 
                 // TODO: Improve algorithm to avoid intersections
-                bool isIntersected = res.Any (particle.isIntersected);
-                if (isIntersected)
+                bool isIntersected = res.Any( particle.isIntersected );
+                if( isIntersected )
                 {
                     i--;
                     continue;
                 }
 
-                res.Add (particle);
+                res.Add( particle );
             }
 
-            res.ForEach (p => p.Position = p.Position / radius);
+            res.ForEach( p => p.Position = p.Position / radius );
 
             return res;
         }
@@ -72,33 +72,33 @@ namespace ClusterLib
         /// </summary>
         /// <returns>The determ particles.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermParticles (Material material)
+        public static List<Particle> GetDetermParticles( Material material )
         {
-            var res = new List<Particle> ();
+            var res = new List<Particle>();
 
-            var p1 = new Particle (material);
-            p1.Position = new Vector (0.5, 0.25, 0.25);
-            p1.NormalVector = new Vector (1 / Math.Sqrt (2), 1 / Math.Sqrt (2), 0);
-            p1.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            res.Add (p1);
+            var p1 = new Particle( material );
+            p1.Position = new Vector( 0.5, 0.25, 0.25 );
+            p1.NormalVector = new Vector( 1 / Math.Sqrt( 2 ), 1 / Math.Sqrt( 2 ), 0 );
+            p1.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            res.Add( p1 );
 
-            var p2 = new Particle (material);
-            p2.Position = new Vector (-0.25, 0.5, 0.25);
-            p2.NormalVector = new Vector (0, 0, 1);
-            p2.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            res.Add (p2);
+            var p2 = new Particle( material );
+            p2.Position = new Vector( -0.25, 0.5, 0.25 );
+            p2.NormalVector = new Vector( 0, 0, 1 );
+            p2.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            res.Add( p2 );
 
-            var p3 = new Particle (material);
-            p3.Position = new Vector (-0.5, -0.25, 0.25);
-            p3.NormalVector = new Vector (1) / Math.Sqrt (3);
-            p3.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            res.Add (p3);
+            var p3 = new Particle( material );
+            p3.Position = new Vector( -0.5, -0.25, 0.25 );
+            p3.NormalVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            p3.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            res.Add( p3 );
 
-            var p4 = new Particle (material);
-            p4.Position = new Vector (-0.25, -0.25, -0.25);
-            p4.NormalVector = new Vector (0, 0, 1);
-            p4.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            res.Add (p4);
+            var p4 = new Particle( material );
+            p4.Position = new Vector( -0.25, -0.25, -0.25 );
+            p4.NormalVector = new Vector( 0, 0, 1 );
+            p4.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            res.Add( p4 );
         
             return res;
         }
@@ -108,15 +108,15 @@ namespace ClusterLib
         /// </summary>
         /// <returns>The determ single particle.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermSingleParticle (Material material)
+        public static List<Particle> GetDetermSingleParticle( Material material )
         {
-            var res = new List<Particle> ();
+            var res = new List<Particle>();
 
-            var p = new Particle (material);
-            p.Position = new Vector (0.5, 0.25, 0.25);
-            p.NormalVector = new Vector (1, 0, 0);
-            p.MagneticVector = new Vector (1) / Math.Sqrt (3);
-            res.Add (p);
+            var p = new Particle( material );
+            p.Position = new Vector( 0.5, 0.25, 0.25 );
+            p.NormalVector = new Vector( 1, 0, 0 );
+            p.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            res.Add( p );
 
             return res;
         }

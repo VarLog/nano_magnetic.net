@@ -45,31 +45,31 @@ namespace ClusterLib
 
         #region Constructors
 
-        public Particle (Material material)
+        public Particle( Material material )
         {
             Material = material;
-            genNormalVector ();
+            genNormalVector();
         }
 
         #endregion
 
-        void genNormalVector ()
+        void genNormalVector()
         {
-            var rand = new Random ();
+            var rand = new Random();
 
-            var randVector = new Vector ((rand.NextDouble () - 0.5),
-                                 (rand.NextDouble () - 0.5),
-                                 (rand.NextDouble () - 0.5));
+            var randVector = new Vector( ( rand.NextDouble() - 0.5 ),
+                                 ( rand.NextDouble() - 0.5 ),
+                                 ( rand.NextDouble() - 0.5 ) );
 
             NormalVector = randVector;
-            NormalVector = NormalVector / NormalVector.mod ();
+            NormalVector = NormalVector / NormalVector.mod();
         }
 
-        public bool isIntersected (Particle that)
+        public bool isIntersected( Particle that )
         {
             var diff = Position - that.Position;
-            var distance = diff.mod ();
-            return distance < (Material.Radius + that.Material.Radius);
+            var distance = diff.mod();
+            return distance < ( Material.Radius + that.Material.Radius );
         }
     }
 }

@@ -50,7 +50,7 @@ namespace ClusterLib
         /// <summary>
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
         /// </summary>
-        public Vector ()
+        public Vector()
         {
             X = default(double);
             Y = default(double);
@@ -61,7 +61,7 @@ namespace ClusterLib
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
         /// </summary>
         /// <param name="value">Value for X, Y and for Z.</param>
-        public Vector (double value)
+        public Vector( double value )
         {
             X = Y = Z = value;
         }
@@ -72,7 +72,7 @@ namespace ClusterLib
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
-        public Vector (double x, double y, double z)
+        public Vector( double x, double y, double z )
         {
             X = x;
             Y = y;
@@ -82,15 +82,15 @@ namespace ClusterLib
         /// <summary>
         /// Module (distance) of Vector instance.
         /// </summary>
-        public double mod ()
+        public double mod()
         {
-            return Math.Sqrt (square ());
+            return Math.Sqrt( square() );
         }
 
         /// <summary>
         /// Square of the module (distance) of the Vector instance.
         /// </summary>
-        public double square ()
+        public double square()
         {
             return X * X + Y * Y + Z * Z;
         }
@@ -99,39 +99,39 @@ namespace ClusterLib
         /// Dot product of two vector: this and that.
         /// </summary>
         /// <param name="that">Another Vector</param>
-        public double dot (Vector that)
+        public double dot( Vector that )
         {
             return X * that.X + Y * that.Y + Z * that.Z;
         }
 
-        public static Vector operator * (Vector v1, Vector v2)
+        public static Vector operator *( Vector v1, Vector v2 )
         {
-            return new Vector (v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z);
+            return new Vector( v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z );
         }
 
-        public static Vector operator * (Vector v, double scalar)
+        public static Vector operator *( Vector v, double scalar )
         {
-            return new Vector (v.X * scalar, v.Y * scalar, v.Z * scalar);
+            return new Vector( v.X * scalar, v.Y * scalar, v.Z * scalar );
         }
 
-        public static Vector operator / (Vector v1, Vector v2)
+        public static Vector operator /( Vector v1, Vector v2 )
         {
-            return new Vector (v1.X / v2.X, v1.Y / v2.Y, v1.Z / v2.Z);
+            return new Vector( v1.X / v2.X, v1.Y / v2.Y, v1.Z / v2.Z );
         }
 
-        public static Vector operator / (Vector v, double scalar)
+        public static Vector operator /( Vector v, double scalar )
         {
-            return v * (1 / scalar);
+            return v * ( 1 / scalar );
         }
 
-        public static Vector operator + (Vector v1, Vector v2)
+        public static Vector operator +( Vector v1, Vector v2 )
         {
-            return new Vector (v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
+            return new Vector( v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z );
         }
 
-        public static Vector operator - (Vector v1, Vector v2)
+        public static Vector operator -( Vector v1, Vector v2 )
         {
-            return new Vector (v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
+            return new Vector( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
         }
 
     }

@@ -79,7 +79,7 @@ namespace ClusterLib
         /// <param name="anisotropy">Magnetic anisotropy. <see cref="MagneticAnisotropy"/></param>
         /// <param name="saturation">Magnetic saturation. <see cref="MagneticSaturation"/></param>
         /// <param name="radius">Radius. <see cref="Radius"/></param>
-        public Material (double anisotropy, double saturation, double radius)
+        public Material( double anisotropy, double saturation, double radius )
         {
             MagneticAnisotropy = anisotropy;
             MagneticSaturation = saturation;
@@ -87,7 +87,7 @@ namespace ClusterLib
             MagneticDamping = 2 * MagneticAnisotropy / MagneticSaturation;
 
             Radius = radius;
-            Volume = (4.0 / 3.0) * Math.PI * Math.Pow (Radius, 3);
+            Volume = ( 4.0 / 3.0 ) * Math.PI * Math.Pow( Radius, 3 );
         }
     }
 }
