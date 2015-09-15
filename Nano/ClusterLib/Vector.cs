@@ -45,17 +45,7 @@ namespace ClusterLib
         /// Gets or sets the z.
         /// </summary>
         /// <value>The z.</value>
-        public double Z { set; get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
-        /// </summary>
-        public Vector()
-        {
-            X = default(double);
-            Y = default(double);
-            Z = default(double);
-        }
+        public double Z { set; get; }    
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
