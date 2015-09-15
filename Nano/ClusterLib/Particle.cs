@@ -27,7 +27,7 @@ using System;
 
 namespace ClusterLib
 {
-    public class Atom
+    public class Particle
     {
         #region Parametrs
 
@@ -45,30 +45,31 @@ namespace ClusterLib
 
         #region Constructors
 
-        public Atom (Material material)
+        public Particle( Material material )
         {
             Material = material;
+            genNormalVector();
         }
 
         #endregion
 
-        public void GenNormalVector ()
+        void genNormalVector()
         {
-            var R = new Random ();
+            var rand = new Random();
 
-            var randVector = new Vector ((R.NextDouble () - 0.5),
-                                 (R.NextDouble () - 0.5),
-                                 (R.NextDouble () - 0.5));
+            var randVector = new Vector( ( rand.NextDouble() - 0.5 ),
+                                 ( rand.NextDouble() - 0.5 ),
+                                 ( rand.NextDouble() - 0.5 ) );
 
             NormalVector = randVector;
-            NormalVector = NormalVector / NormalVector.mod ();
+            NormalVector = NormalVector / NormalVector.mod();
         }
 
-        public bool isIntersected (Atom that)
+        public bool isIntersected( Particle that )
         {
             var diff = Position - that.Position;
-            var distance = diff.mod ();
-            return distance < (Material.Radius + that.Material.Radius);
+            var distance = diff.mod();
+            return distance < ( Material.Radius + that.Material.Radius );
         }
     }
 }

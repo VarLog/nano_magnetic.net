@@ -31,16 +31,20 @@ namespace ClusterLib
 
         public double R { get; set; }
 
+<<<<<<< HEAD
         public Result(double u, double r)
             : this()
+=======
+        public Result( double u, double r )
+>>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
         {
             U = u;
             R = r;
         }
 
-        public static Result operator - (Result that)
+        public static Result operator -( Result that )
         {
-            return new Result (-that.R, -that.U);            
+            return new Result( -that.R, -that.U );            
         }
     }
 }

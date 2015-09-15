@@ -33,19 +33,25 @@ namespace Cluster
 {
     class Program
     {
-        static void Main (string[] args)
+        static void Main( string[] args )
         {
+<<<<<<< HEAD
             var material = new Material (4000, 800, 20e-7);
+=======
+            const double anisotropy = 40000;
+            const double saturation = 500;
+            const double particleRadius = 20e-7;
+            var material = new Material( anisotropy, saturation, particleRadius );
+>>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
 
-            const double radius = 80e-7;
 
-
-            var magnetic = new Magnetic ();
+            var magnetic = new Magnetic();
             magnetic.kappa = 0.2;
             magnetic.Stc = 30;
             magnetic.stabkoeff = 30;
             magnetic.EpsR = 1e-12;
 
+            // Random MagneticVector
 //            {
 //                var R = new Random ();
 //                var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
@@ -53,19 +59,32 @@ namespace Cluster
 //                    2 * (R.NextDouble () - 0.5));
 //                magnetic.MagneticVector = randVector;
 //            }
+<<<<<<< HEAD
             magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);            
+=======
+            magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
 
+>>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
 
-            //var cluster = new Sphere (radius, magneticVector);
-            //cluster.AddAtomList(material, 20);
+            const double clusterRadius = 80e-7;
 
+            var cluster = new Sphere( clusterRadius, magnetic );
+            cluster.Particles = Utils.GetDetermParticles( material );
+
+<<<<<<< HEAD
             var cluster = new Sphere (radius, magnetic);
             cluster.AddDetermAtoms(material);
+=======
+            //const int particlesCount = 20;
+            //cluster.Particles = Utils.GenerateRandromParticlesInSphere (material, clusterRadius, particlesCount);
+>>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
 
-                
-            cluster.calculate (1500, 300);
+            var rangeH = new [] { -1500, 1500 };
+            const int step = 300;
+            cluster.calculate( rangeH, step );
 
-            cluster.Result.ForEach (r => Debug.WriteLine ("U: " + r.U + " R: " + r.R));
+            Console.WriteLine( "Results:" );
+            cluster.Result.ForEach( r => Console.WriteLine( "U: " + r.U + " R: " + r.R ) );
         }
     }
 }
