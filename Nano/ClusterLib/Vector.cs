@@ -47,11 +47,6 @@ namespace ClusterLib
         /// <value>The z.</value>
         public double Z { set; get; }
 
-<<<<<<< HEAD
-        //public Vector ()   {       }
-
-        public Vector (double value):this()
-=======
         /// <summary>
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
         /// </summary>
@@ -66,24 +61,18 @@ namespace ClusterLib
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
         /// </summary>
         /// <param name="value">Value for X, Y and for Z.</param>
-        public Vector( double value )
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
+        public Vector( double value ) : this()
         {
             X = Y = Z = value;
         }
 
-<<<<<<< HEAD
-        public Vector(double x, double y, double z)
-            : this()
-=======
         /// <summary>
         /// Initializes a new instance of the <see cref="ClusterLib.Vector"/> struct.
         /// </summary>
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
-        public Vector( double x, double y, double z )
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
+        public Vector( double x, double y, double z ) : this()
         {
 
             X = x;

@@ -35,15 +35,10 @@ namespace Cluster
     {
         static void Main( string[] args )
         {
-<<<<<<< HEAD
-            var material = new Material (4000, 800, 20e-7);
-=======
-            const double anisotropy = 40000;
-            const double saturation = 500;
+            const double anisotropy = 4000;
+            const double saturation = 800;
             const double particleRadius = 20e-7;
             var material = new Material( anisotropy, saturation, particleRadius );
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
-
 
             var magnetic = new Magnetic();
             magnetic.kappa = 0.2;
@@ -59,25 +54,16 @@ namespace Cluster
 //                    2 * (R.NextDouble () - 0.5));
 //                magnetic.MagneticVector = randVector;
 //            }
-<<<<<<< HEAD
-            magnetic.MagneticVector = new Vector (1) / Math.Sqrt (3);            
-=======
-            magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
 
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
+            magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
 
             const double clusterRadius = 80e-7;
 
             var cluster = new Sphere( clusterRadius, magnetic );
             cluster.Particles = Utils.GetDetermParticles( material );
 
-<<<<<<< HEAD
-            var cluster = new Sphere (radius, magnetic);
-            cluster.AddDetermAtoms(material);
-=======
             //const int particlesCount = 20;
             //cluster.Particles = Utils.GenerateRandromParticlesInSphere (material, clusterRadius, particlesCount);
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
 
             var rangeH = new [] { -1500, 1500 };
             const int step = 300;

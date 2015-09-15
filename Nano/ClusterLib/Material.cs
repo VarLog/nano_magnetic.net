@@ -29,19 +29,6 @@ namespace ClusterLib
 {
     public class Material
     {
-<<<<<<< HEAD
-        public double K1 { set; get; }
-
-        public double Ms { set; get; }
-
-        public double Hk { set; get; }
-
-        public double Diametr { set;  get; }
-
-        public double Radius { set;  get; }
-
-        public double Volume { set; get; }
-=======
         /// <summary>
         /// Magnetic anisotropy is the directional dependence of a material's magnetic properties. 
         /// The magnetic moment of magnetically anisotropic materials will tend to align with an "easy axis", 
@@ -50,7 +37,7 @@ namespace ClusterLib
         /// </summary>
         /// <see href="https://en.wikipedia.org/wiki/Magnetic_anisotropy"/>
         /// <value>The magnetic anisotropy.</value>
-        public double MagneticAnisotropy { get; }
+        public double MagneticAnisotropy { get; set; }
 
         /// <summary>
         /// Seen in some magnetic materials, saturation is the state reached when an increase in applied external 
@@ -62,7 +49,7 @@ namespace ClusterLib
         /// </summary>
         /// <seealso href="https://en.wikipedia.org/wiki/Saturation_(magnetic)"/>
         /// <value>The magnetic saturation.</value>
-        public double MagneticSaturation { get; }
+        public double MagneticSaturation { get; set; }
 
         /// <summary>
         /// Magnetic damping is a form of damping that occurs when a magnetic field moves through a conductor 
@@ -70,22 +57,21 @@ namespace ClusterLib
         /// \f$H_d\f$
         /// </summary>
         /// <value>The magnetic damping.</value>
-        public double MagneticDamping { get; }
+        public double MagneticDamping { get; set; }
 
         /// <summary>
         /// The radius of the particle of this material.
         /// \f$R\f$
         /// </summary>
         /// <value>The radius.</value>
-        public double Radius { get; }
+        public double Radius { get; set; }
 
         /// <summary>
         /// The volume of the particle of this material.
         /// \f$V\f$
         /// </summary>
         /// <value>The volume.</value>
-        public double Volume { get; }
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
+        public double Volume { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClusterLib.Material"/> class.

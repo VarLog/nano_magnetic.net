@@ -31,12 +31,7 @@ namespace ClusterLib
 
         public double R { get; set; }
 
-<<<<<<< HEAD
-        public Result(double u, double r)
-            : this()
-=======
-        public Result( double u, double r )
->>>>>>> 8a9d90f46e8abcce2dfbba29f4e262324e6c59c9
+        public Result( double u, double r ) : this()
         {
             U = u;
             R = r;
