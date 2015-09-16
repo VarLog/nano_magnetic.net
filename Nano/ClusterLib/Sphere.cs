@@ -123,7 +123,7 @@ namespace ClusterLib
             //var volume = (4.0 / 3.0) * Math.PI * Math.Pow (Radius, 3);
             //ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
 
-            Console.WriteLine( "Particles density h == " + ParticlesDensity );
+            Utils.Debug( "Particles density h == " + ParticlesDensity );
 
             // TODO: Improve mechanism to store and to calculate destinations
             mat11 = new double[ParticlesCount, ParticlesCount];
@@ -174,7 +174,7 @@ namespace ClusterLib
         /// </summary>
         /// <param name="magneticIntensityRange">Magnetic intensity range.</param>
         /// <param name="step">Step.</param>
-        public void calculate( IEnumerable<int> magneticIntensityRange, double step )
+        public void calculate( IEnumerable<double> magneticIntensityRange, double step )
         {
             if( Particles == null || !Particles.Any() )
             {
@@ -275,8 +275,8 @@ namespace ClusterLib
             var Hrs = Particles.ConvertAll( p => p.Hr.mod() );
             double maxHr = Hrs.Max();
 
-            var dt = MagneticField.stabkoeff * Math.PI /
-                     ( 30 * maxHr * ( 1 + MagneticField.Stc ) * ( 1 + MagneticField.kappa * MagneticField.kappa ) );
+            var dt = MagneticField.StabFactor * Math.PI /
+                     ( 30 * maxHr * ( 1 + MagneticField.Stc ) * ( 1 + MagneticField.Kappa * MagneticField.Kappa ) );
 
             foreach( var particle in Particles )
             {

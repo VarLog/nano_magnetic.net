@@ -27,10 +27,10 @@ namespace ClusterLib
 {
     public class Magnetic
     {
-        public double Stc;
-        public double stabkoeff;
-        public double kappa;
-        public double EpsR;
-        public Vector MagneticVector;
+        public double Stc { get; set; }
+        public double StabFactor { get; set; }
+        public double Kappa { get; set; }
+        public double EpsR { get; set; }
+        public Vector MagneticVector { get; set; }
     }
 }
