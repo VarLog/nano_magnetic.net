@@ -31,6 +31,30 @@ namespace ClusterLib
     public static class Utils
     {
         /// <summary>
+        /// The verbosity level.
+        /// </summary>
+        public static int VerbosityLevel { get; set; }
+
+        /// <summary>
+        /// Debug output using specified format and args.
+        /// </summary>
+        /// <param name="format">Format.</param>
+        /// <param name="args">Arguments.</param>
+        public static void Debug( string format, params object[] args )
+        {
+            if( VerbosityLevel > 0 )
+            {
+                for( int i = 0; i < VerbosityLevel; i++ )
+                {
+                    Console.Write( "#" );
+                }
+                Console.Write( " " );
+
+                Console.WriteLine( format, args );
+            }
+        }
+
+        /// <summary>
         /// Generates the randrom particles.
         /// </summary>
         /// <param name="material">Particles material.</param>
@@ -68,11 +92,11 @@ namespace ClusterLib
         }
 
         /// <summary>
-        /// Gets a list of 4 determinated particles.
+        /// Gets a list of 4 predefined particles.
         /// </summary>
         /// <returns>The determ particles.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermParticles( Material material )
+        public static List<Particle> GetPredefineParticles( Material material )
         {
             var res = new List<Particle>();
 
@@ -104,11 +128,11 @@ namespace ClusterLib
         }
 
         /// <summary>
-        /// Gets a single determinated particle.
+        /// Gets a single predefined particle.
         /// </summary>
         /// <returns>The determ single particle.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermSingleParticle( Material material )
+        public static List<Particle> GetPredefineSingleParticle( Material material )
         {
             var res = new List<Particle>();
 

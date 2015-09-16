@@ -25,49 +25,160 @@
 
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+
+using NDesk.Options;
 
 using ClusterLib;
-using System.Collections.Generic;
 
 namespace Cluster
 {
     class Program
     {
+        static class Defaults
+        {
+            public const double Anisotropy = 4000;
+            public const double Saturation = 800;
+            public const double ParticleRadius = 20e-7;
+
+            public const double Kappa = 0.2;
+            public const double Stc = 30;
+            public const double StabFactor = 30;
+            public const double EpsR = 1e-12;
+
+            public const double ClusterRadius = 80e-7;
+
+            public const double MinH = -1500;
+            public const double MaxH = 1500;
+            public const double StepH = 300;
+        }
+
+        static string Version()
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo( assembly.Location );
+            string version = fvi.FileVersion;
+
+            return version;
+        }
+
+        static void Usage( string appName, OptionSet p )
+        {
+            var version = Version();
+
+            Console.WriteLine( "Usage: " + appName + " [<options>]" );
+            Console.WriteLine( "Version: " + version );
+            Console.WriteLine();
+            Console.WriteLine( "Options:" );
+            p.WriteOptionDescriptions( Console.Out );
+        }
+
         static void Main( string[] args )
         {
-            const double anisotropy = 4000;
-            const double saturation = 800;
-            const double particleRadius = 20e-7;
+            var appName = AppDomain.CurrentDomain.FriendlyName;
+
+            bool needShowHelp = false;
+
+            double anisotropy = Defaults.Anisotropy;
+            double saturation = Defaults.Saturation;
+            double particleRadius = Defaults.ParticleRadius;
+
+            double kappa = Defaults.Kappa;
+            double stc = Defaults.Stc;
+            double stabFactor = Defaults.StabFactor;
+            double epsR = Defaults.EpsR;
+
+            double clusterRadius = Defaults.ClusterRadius;
+
+            double minH = Defaults.MinH;
+            double maxH = Defaults.MaxH;
+            double stepH = Defaults.StepH;
+
+            int particlesCount = 0;
+
+            var p = new OptionSet();
+            p.Add( "n|particles-count=", "Count of particles.", (int v ) => particlesCount = v );
+
+            p.Add( "a|anisotropy=", "Magnetic anisotropy of the material.", (double v ) => anisotropy = v );
+            p.Add( "s|saturation=", "Magnetic saturation of the material.", (double v ) => saturation = v );
+            p.Add( "p|particle-radius=", "Radius of a particular of the material.", (double v ) => particleRadius = v );
+
+            p.Add( "k|kappa=", "", (double v ) => kappa = v );
+            p.Add( "t|stc=", "", (double v ) => stc = v );
+            p.Add( "f|stab-factor=", "", (double v ) => stabFactor = v );
+            p.Add( "e|eps-r=", "", (double v ) => epsR = v );
+
+            p.Add( "c|cluster-radius=", "Radius of the sphere.", (double v ) => clusterRadius = v );
+
+            p.Add( "min=", "Min value of H.", (double v ) => minH = v );
+            p.Add( "max=", "Max value of H.", (double v ) => maxH = v );
+            p.Add( "step=", "Step for H.", (double v ) => stepH = v );
+
+            p.Add( "h|help", "Show this message and exit", v => needShowHelp = v != null );
+            p.Add( "v", "Increase debug message verbosity",
+                v => {
+                    if( v != null )
+                    {
+                        Utils.VerbosityLevel++;
+                    }
+                } );
+            
+            try
+            {
+                p.Parse( args );
+            }
+            catch( OptionException e )
+            {
+                Console.Write( appName + ": " );
+                Console.WriteLine( e.Message );
+                Console.WriteLine( "Try `" + appName + " --help' for more information." );
+                return;
+            }
+
+            if( needShowHelp )
+            {
+                Usage( appName, p );
+                return;
+            }
+
             var material = new Material( anisotropy, saturation, particleRadius );
 
             var magnetic = new Magnetic();
-            magnetic.kappa = 0.2;
-            magnetic.Stc = 30;
-            magnetic.stabkoeff = 30;
-            magnetic.EpsR = 1e-12;
+            magnetic.Kappa = kappa;
+            magnetic.Stc = stc;
+            magnetic.StabFactor = stabFactor;
+            magnetic.EpsR = epsR;
 
-            // Random MagneticVector
-//            {
-//                var R = new Random ();
-//                var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
-//                    2 * (R.NextDouble () - 0.5), 
-//                    2 * (R.NextDouble () - 0.5));
-//                magnetic.MagneticVector = randVector;
-//            }
+            if( particlesCount > 0 )
+            {
+                // Generate random MagneticVector
+                var R = new Random();
 
-            magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-
-            const double clusterRadius = 80e-7;
+                var x = 2 * ( R.NextDouble() - 0.5 );
+                var y = 2 * ( R.NextDouble() - 0.5 );
+                var z = 2 * ( R.NextDouble() - 0.5 );
+                magnetic.MagneticVector = new Vector( x, y, z );
+            }
+            else
+            {
+                // Use predefined MagneticVector
+                magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            }
 
             var cluster = new Sphere( clusterRadius, magnetic );
-            cluster.Particles = Utils.GetDetermParticles( material );
+            if( particlesCount > 0 )
+            {
+                // Generate particles
+                cluster.Particles = Utils.GenerateRandromParticlesInSphere( material, clusterRadius, particlesCount );
+            }
+            else
+            {
+                // Use predefined particles
+                cluster.Particles = Utils.GetPredefineParticles( material );
+            }
 
-            //const int particlesCount = 20;
-            //cluster.Particles = Utils.GenerateRandromParticlesInSphere (material, clusterRadius, particlesCount);
-
-            var rangeH = new [] { -1500, 1500 };
-            const int step = 300;
-            cluster.calculate( rangeH, step );
+            var rangeH = new [] { minH, maxH };
+            cluster.calculate( rangeH, stepH );
 
             Console.WriteLine( "Results:" );
             cluster.Result.ForEach( r => Console.WriteLine( "U: " + r.U + " R: " + r.R ) );
