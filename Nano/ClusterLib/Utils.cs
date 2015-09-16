@@ -92,11 +92,11 @@ namespace ClusterLib
         }
 
         /// <summary>
-        /// Gets a list of 4 determinated particles.
+        /// Gets a list of 4 predefined particles.
         /// </summary>
         /// <returns>The determ particles.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermParticles( Material material )
+        public static List<Particle> GetPredefineParticles( Material material )
         {
             var res = new List<Particle>();
 
@@ -128,11 +128,11 @@ namespace ClusterLib
         }
 
         /// <summary>
-        /// Gets a single determinated particle.
+        /// Gets a single predefined particle.
         /// </summary>
         /// <returns>The determ single particle.</returns>
         /// <param name="material">Material.</param>
-        public static List<Particle> GetDetermSingleParticle( Material material )
+        public static List<Particle> GetPredefineSingleParticle( Material material )
         {
             var res = new List<Particle>();
 

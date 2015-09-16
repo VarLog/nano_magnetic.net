@@ -94,7 +94,11 @@ namespace Cluster
             double maxH = Defaults.MaxH;
             double stepH = Defaults.StepH;
 
+            int particlesCount = 0;
+
             var p = new OptionSet();
+            p.Add( "n|particles-count=", "Count of particles.", (int v ) => particlesCount = v );
+
             p.Add( "a|anisotropy=", "Magnetic anisotropy of the material.", (double v ) => anisotropy = v );
             p.Add( "s|saturation=", "Magnetic saturation of the material.", (double v ) => saturation = v );
             p.Add( "p|particle-radius=", "Radius of a particular of the material.", (double v ) => particleRadius = v );
@@ -145,23 +149,33 @@ namespace Cluster
             magnetic.StabFactor = stabFactor;
             magnetic.EpsR = epsR;
 
-            // Random MagneticVector
-//            {
-//                var R = new Random ();
-//                var randVector = new Vector (2 * (R.NextDouble () - 0.5), 
-//                    2 * (R.NextDouble () - 0.5), 
-//                    2 * (R.NextDouble () - 0.5));
-//                magnetic.MagneticVector = randVector;
-//            }
+            if( particlesCount > 0 )
+            {
+                // Generate random MagneticVector
+                var R = new Random();
 
-            magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-
+                var x = 2 * ( R.NextDouble() - 0.5 );
+                var y = 2 * ( R.NextDouble() - 0.5 );
+                var z = 2 * ( R.NextDouble() - 0.5 );
+                magnetic.MagneticVector = new Vector( x, y, z );
+            }
+            else
+            {
+                // Use predefined MagneticVector
+                magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            }
 
             var cluster = new Sphere( clusterRadius, magnetic );
-            cluster.Particles = Utils.GetDetermParticles( material );
-
-            //const int particlesCount = 20;
-            //cluster.Particles = Utils.GenerateRandromParticlesInSphere (material, clusterRadius, particlesCount);
+            if( particlesCount > 0 )
+            {
+                // Generate particles
+                cluster.Particles = Utils.GenerateRandromParticlesInSphere( material, clusterRadius, particlesCount );
+            }
+            else
+            {
+                // Use predefined particles
+                cluster.Particles = Utils.GetPredefineParticles( material );
+            }
 
             var rangeH = new [] { minH, maxH };
             cluster.calculate( rangeH, stepH );
