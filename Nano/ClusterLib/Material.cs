@@ -54,7 +54,7 @@ namespace ClusterLib
         /// <summary>
         /// Magnetic damping is a form of damping that occurs when a magnetic field moves through a conductor 
         /// (or vice versa).
-        /// \f$H_d\f$
+        /// \f$k\f$
         /// </summary>
         /// <value>The magnetic damping.</value>
         public double MagneticDamping { get; set; }

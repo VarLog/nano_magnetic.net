@@ -97,6 +97,13 @@ namespace ClusterLib
         public double ParticlesDensity { get; private set; }
 
         /// <summary>
+        /// The anisotropy coefficient.
+        /// \f\frac{K}{M_{s}^2}\f$
+        /// </summary>
+        /// <value>The anisotropy coefficient.</value>
+        public double AnisotropyCoefficient { get; private set; }
+
+        /// <summary>
         /// Distanation matrixes.
         /// </summary>
         double[,] mat11, mat12, mat13, mat22, mat23, mat33;
@@ -117,14 +124,6 @@ namespace ClusterLib
         /// </summary>
         void calculateDistinations()
         {
-            // TODO: Old implementation. It sould be discussed. 
-            ParticlesDensity = ParticlesMaterial.Volume * ParticlesMaterial.MagneticSaturation / Math.Pow( Radius, 3 );
-
-            //var volume = (4.0 / 3.0) * Math.PI * Math.Pow (Radius, 3);
-            //ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
-
-            Utils.Debug( "Particles density h == " + ParticlesDensity );
-
             // TODO: Improve mechanism to store and to calculate destinations
             mat11 = new double[ParticlesCount, ParticlesCount];
             mat12 = new double[ParticlesCount, ParticlesCount];
@@ -145,7 +144,7 @@ namespace ClusterLib
                     var p1 = Particles[ i ];
                     var p2 = Particles[ j ];
 
-                    var diff = p1.Position - p2.Position;
+                    var diff = p1.RadiusVector - p2.RadiusVector;
 
                     var distance = diff.mod();
                     var distanceCube = Math.Pow( distance, 3 );
@@ -180,6 +179,16 @@ namespace ClusterLib
             {
                 throw new Exception( "There are not any particles to calculate" );
             }
+
+            var volume = ( 4.0 / 3.0 ) * Math.PI * Math.Pow( Radius, 3 );
+            ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
+
+            Utils.Debug( "Particles density h == " + ParticlesDensity );
+
+            AnisotropyCoefficient = ParticlesMaterial.MagneticAnisotropy / Math.Pow( ParticlesMaterial.MagneticSaturation, 2 );
+
+            Utils.Debug( "Anisotropy coefficient == " + AnisotropyCoefficient );
+
 
             calculateDistinations();
 
@@ -258,21 +267,21 @@ namespace ClusterLib
             {
                 var particle = Particles[ i ];
 
-                var sp = particle.MagneticVector.dot( particle.NormalVector );
+                var sp = particle.MagneticVector.dot( particle.EasyAnisotropyAxis );
 
-                var Ha = particle.NormalVector * sp * particle.Material.MagneticDamping;
+                var Ha = particle.EasyAnisotropyAxis * sp * particle.Material.MagneticDamping;
 
                 var HM = CountHdip( i );
 
                 var Hi = HM * -ParticlesDensity;
 
-                particle.Hr = Ha + Hi + h0cur;
+                particle.EffectiveMagneticField = Ha + Hi + h0cur;
             }
         }
 
         public void MakeStep()
         {
-            var Hrs = Particles.ConvertAll( p => p.Hr.mod() );
+            var Hrs = Particles.ConvertAll( p => p.EffectiveMagneticField.mod() );
             double maxHr = Hrs.Max();
 
             var dt = MagneticField.StabFactor * Math.PI /
@@ -283,7 +292,7 @@ namespace ClusterLib
                 Vector Calc;
                 Calc = particle.MagneticVector;
 
-                var H = particle.Hr + Calc * maxHr * MagneticField.Stc;
+                var H = particle.EffectiveMagneticField + Calc * maxHr * MagneticField.Stc;
 
                 var at = 1 / ( 1 + Math.Pow( dt * H.mod(), 2 ) );
 
@@ -309,11 +318,11 @@ namespace ClusterLib
             foreach( var particle in Particles )
             {
                 var v = new Vector();
-                v.X = particle.Hr.Y * particle.MagneticVector.Z - particle.Hr.Z * particle.MagneticVector.Y;
-                v.Y = particle.Hr.Z * particle.MagneticVector.X - particle.Hr.X * particle.MagneticVector.Z;
-                v.Z = particle.Hr.X * particle.MagneticVector.Y - particle.Hr.Y * particle.MagneticVector.X;
+                v.X = particle.EffectiveMagneticField.Y * particle.MagneticVector.Z - particle.EffectiveMagneticField.Z * particle.MagneticVector.Y;
+                v.Y = particle.EffectiveMagneticField.Z * particle.MagneticVector.X - particle.EffectiveMagneticField.X * particle.MagneticVector.Z;
+                v.Z = particle.EffectiveMagneticField.X * particle.MagneticVector.Y - particle.EffectiveMagneticField.Y * particle.MagneticVector.X;
 
-                var x = v.mod() / particle.Hr.mod();
+                var x = v.mod() / particle.EffectiveMagneticField.mod();
                 if( Rmax < x )
                 {
                     Rmax = x;

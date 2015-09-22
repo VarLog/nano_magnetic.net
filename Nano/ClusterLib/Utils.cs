@@ -73,7 +73,7 @@ namespace ClusterLib
                 var randPosition = new Vector( ( rand.NextDouble() - 0.5 ) * radius, 
                                        ( rand.NextDouble() - 0.5 ) * radius, 
                                        ( rand.NextDouble() - 0.5 ) * radius );
-                particle.Position = randPosition;
+                particle.RadiusVector = randPosition;
 
                 // TODO: Improve algorithm to avoid intersections
                 bool isIntersected = res.Any( particle.isIntersected );
@@ -86,7 +86,7 @@ namespace ClusterLib
                 res.Add( particle );
             }
 
-            res.ForEach( p => p.Position = p.Position / radius );
+            res.ForEach( p => p.RadiusVector = p.RadiusVector / radius );
 
             return res;
         }
@@ -101,26 +101,26 @@ namespace ClusterLib
             var res = new List<Particle>();
 
             var p1 = new Particle( material );
-            p1.Position = new Vector( 0.5, 0.25, 0.25 );
-            p1.NormalVector = new Vector( 1 / Math.Sqrt( 2 ), 1 / Math.Sqrt( 2 ), 0 );
+            p1.RadiusVector = new Vector( 0.5, 0.25, 0.25 );
+            p1.EasyAnisotropyAxis = new Vector( 1 / Math.Sqrt( 2 ), 1 / Math.Sqrt( 2 ), 0 );
             p1.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             res.Add( p1 );
 
             var p2 = new Particle( material );
-            p2.Position = new Vector( -0.25, 0.5, 0.25 );
-            p2.NormalVector = new Vector( 0, 0, 1 );
+            p2.RadiusVector = new Vector( -0.25, 0.5, 0.25 );
+            p2.EasyAnisotropyAxis = new Vector( 0, 0, 1 );
             p2.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             res.Add( p2 );
 
             var p3 = new Particle( material );
-            p3.Position = new Vector( -0.5, -0.25, 0.25 );
-            p3.NormalVector = new Vector( 1 ) / Math.Sqrt( 3 );
+            p3.RadiusVector = new Vector( -0.5, -0.25, 0.25 );
+            p3.EasyAnisotropyAxis = new Vector( 1 ) / Math.Sqrt( 3 );
             p3.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             res.Add( p3 );
 
             var p4 = new Particle( material );
-            p4.Position = new Vector( -0.25, -0.25, -0.25 );
-            p4.NormalVector = new Vector( 0, 0, 1 );
+            p4.RadiusVector = new Vector( -0.25, -0.25, -0.25 );
+            p4.EasyAnisotropyAxis = new Vector( 0, 0, 1 );
             p4.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             res.Add( p4 );
         
@@ -137,8 +137,8 @@ namespace ClusterLib
             var res = new List<Particle>();
 
             var p = new Particle( material );
-            p.Position = new Vector( 0.5, 0.25, 0.25 );
-            p.NormalVector = new Vector( 1, 0, 0 );
+            p.RadiusVector = new Vector( 0.5, 0.25, 0.25 );
+            p.EasyAnisotropyAxis = new Vector( 1, 0, 0 );
             p.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             res.Add( p );
 

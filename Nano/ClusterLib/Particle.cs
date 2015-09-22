@@ -31,15 +31,39 @@ namespace ClusterLib
     {
         #region Parametrs
 
-        public Vector Position { get; set; }
+        /// <summary>
+        /// Gets or sets the radius vector in the cluster.
+        /// \f$r\f$
+        /// </summary>
+        /// <value>The radius vector in the cluster.</value>
+        public Vector RadiusVector { get; set; }
 
+        /// <summary>
+        /// Gets or sets the unit magnetic vector.
+        /// \f$a\f$
+        /// </summary>
+        /// <value>The unit magnetic vector.</value>
         public Vector MagneticVector { get; set; }
 
-        public Vector NormalVector { get; set; }
+        /// <summary>
+        /// Gets or sets the easy anisotropy axis.
+        /// \f$n\f$
+        /// </summary>
+        /// <value>The easy anisotropy axis.</value>
+        public Vector EasyAnisotropyAxis { get; set; }
 
+        /// <summary>
+        /// Gets the material of the particle.
+        /// </summary>
+        /// <value>The material of the particle.</value>
         public Material Material { get; private set; }
 
-        public Vector Hr { get; set; }
+        /// <summary>
+        /// Gets or sets the effective magnetic field vector.
+        /// \f$H_{ef}\f$
+        /// </summary>
+        /// <value>The effective magnetic field vector.</value>
+        public Vector EffectiveMagneticField { get; set; }
 
         #endregion
 
@@ -61,13 +85,13 @@ namespace ClusterLib
                                  ( rand.NextDouble() - 0.5 ),
                                  ( rand.NextDouble() - 0.5 ) );
 
-            NormalVector = randVector;
-            NormalVector = NormalVector / NormalVector.mod();
+            EasyAnisotropyAxis = randVector;
+            EasyAnisotropyAxis = EasyAnisotropyAxis / EasyAnisotropyAxis.mod();
         }
 
         public bool isIntersected( Particle that )
         {
-            var diff = Position - that.Position;
+            var diff = RadiusVector - that.RadiusVector;
             var distance = diff.mod();
             return distance < ( Material.Radius + that.Material.Radius );
         }
