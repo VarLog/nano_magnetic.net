@@ -86,13 +86,13 @@ namespace ClusterLib
                                  ( rand.NextDouble() - 0.5 ) );
 
             EasyAnisotropyAxis = randVector;
-            EasyAnisotropyAxis = EasyAnisotropyAxis / EasyAnisotropyAxis.mod();
+            EasyAnisotropyAxis = EasyAnisotropyAxis / EasyAnisotropyAxis.Mod();
         }
 
         public bool isIntersected( Particle that )
         {
             var diff = RadiusVector - that.RadiusVector;
-            var distance = diff.mod();
+            var distance = diff.Mod();
             return distance < ( Material.Radius + that.Material.Radius );
         }
     }

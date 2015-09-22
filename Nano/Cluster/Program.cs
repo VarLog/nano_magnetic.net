@@ -165,7 +165,9 @@ namespace Cluster
                 magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
             }
 
-            var cluster = new Sphere( clusterRadius, magnetic );
+            var cluster = new Sphere( clusterRadius );
+
+            // Analysis disable once ConvertIfStatementToConditionalTernaryExpression
             if( particlesCount > 0 )
             {
                 // Generate particles
@@ -177,11 +179,23 @@ namespace Cluster
                 cluster.Particles = Utils.GetPredefineParticles( material );
             }
 
-            var rangeH = new [] { minH, maxH };
-            cluster.calculate( rangeH, stepH, epsillon );
+            var results = new Dictionary<double, double>();
+
+            for( var i = minH; i < maxH; i += stepH )
+            {
+                magnetic.MagneticVector = magnetic.MagneticVector * i;
+
+                var magneticAverage = cluster.Calculate( magnetic, epsillon );
+
+                results.Add(i, magneticAverage);
+            }
+
 
             Console.WriteLine( "Results:" );
-            cluster.Result.ForEach( r => Console.WriteLine( "U: " + r.U + " R: " + r.R ) );
+            foreach( var pair in results )
+            {
+                Console.WriteLine( "ExternalMagneticField: " + pair.Key + " EffectiveMagneticField: " + pair.Value );
+            }
         }
     }
 }

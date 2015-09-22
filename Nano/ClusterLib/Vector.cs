@@ -72,15 +72,15 @@ namespace ClusterLib
         /// <summary>
         /// Module (distance) of Vector instance.
         /// </summary>
-        public double mod()
+        public double Mod()
         {
-            return Math.Sqrt( square() );
+            return Math.Sqrt( Square() );
         }
 
         /// <summary>
         /// Square of the module (distance) of the Vector instance.
         /// </summary>
-        public double square()
+        public double Square()
         {
             return X * X + Y * Y + Z * Z;
         }
@@ -89,7 +89,7 @@ namespace ClusterLib
         /// Dot product of two vector: this and that.
         /// </summary>
         /// <param name="that">Result scalar</param>
-        public double dot( Vector that )
+        public double Dot( Vector that )
         {
             return X * that.X + Y * that.Y + Z * that.Z;
         }
@@ -98,7 +98,7 @@ namespace ClusterLib
         /// Cross product of two vector: [ this x that ].
         /// </summary>
         /// <param name="that">Result vector.</param>
-        public Vector cross( Vector that )
+        public Vector Cross( Vector that )
         {
             Vector res;
             res.X = Y * that.Z - Z * that.Y;
@@ -106,6 +106,14 @@ namespace ClusterLib
             res.Z = X * that.Y - Y * that.X;
 
             return res;
+        }
+
+        /// <summary>
+        /// Get the unit normalized vector.
+        /// </summary>
+        public Vector Norm()
+        {
+            return this / Mod();
         }
 
         public static Vector operator *( Vector v1, Vector v2 )

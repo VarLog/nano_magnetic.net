@@ -32,20 +32,10 @@ namespace ClusterLib
     public class Sphere
     {
         /// <summary>
-        /// The external magnetic field.
-        /// </summary>
-        readonly public Magnetic MagneticField;
-
-        /// <summary>
         /// The radius of the sphere.
         /// \f$R_{cl}\f$
         /// </summary>
         readonly public double Radius;
-
-        /// <summary>
-        /// The results.
-        /// </summary>
-        readonly public List<Result> Result = new List<Result>();
 
         /// <summary>
         /// Gets or sets the particles.
@@ -110,11 +100,9 @@ namespace ClusterLib
         /// Initializes a new instance of the <see cref="ClusterLib.Sphere"/> class.
         /// </summary>
         /// <param name="radius">Radius.</param>
-        /// <param name="magneticField">Magnetic field.</param>
-        public Sphere( double radius, Magnetic magneticField )
+        public Sphere( double radius )
         {
             Radius = radius;
-            MagneticField = magneticField;
         }
 
         /// <summary>
@@ -144,7 +132,7 @@ namespace ClusterLib
 
                     var diff = p1.RadiusVector - p2.RadiusVector;
 
-                    var distance = diff.mod();
+                    var distance = diff.Mod();
                     var distanceCube = Math.Pow( distance, 3 );
 
                     var nR = diff / distance;
@@ -169,16 +157,16 @@ namespace ClusterLib
         /// <summary>
         /// Calculate the Landau–Lifshitz–Gilbert equation.
         /// </summary>
-        /// <param name="magneticIntensityRange">Magnetic intensity range.</param>
-        /// <param name="step">Step.</param>
-        public void calculate( IEnumerable<double> magneticIntensityRange, double step, double epsillon )
+        /// <param name="magneticField">The external magnetic field.</param>
+        /// <param name="epsillon">Epsillon.</param>
+        public double Calculate( Magnetic magneticField, double epsillon )
         {
             if( Particles == null || !Particles.Any() )
             {
                 throw new Exception( "There are not any particles to calculate" );
             }
 
-            particles.ForEach( p => p.MagneticVector = MagneticField.MagneticVector );
+            particles.ForEach( p => p.MagneticVector = magneticField.MagneticVector.Norm() );
 
             var volume = ( 4.0 / 3.0 ) * Math.PI * Math.Pow( Radius, 3 );
             ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
@@ -192,38 +180,27 @@ namespace ClusterLib
 
             calculateDistinations();
 
-            var array = magneticIntensityRange.ToArray();
-            var min = array.ElementAt( 0 );
-            var max = array.ElementAt( 1 );
-
-            for( double i = max; i >= min; i = i - step )
+            double sum = 0;
+         
+            while( true )
             {
-                double sum = 0;
-             
-                var magneticVector = MagneticField.MagneticVector * i;
+                CountH( magneticField.MagneticVector );
+                MakeStep( magneticField );
+                var isDone = CountForce( epsillon );
 
-                int iterCount = 0;
-
-                while( true )
+                // FIXME: Potential infinity loop here:
+                if( isDone )
                 {
-                    CountH( magneticVector );
-                    MakeStep();
-                    var isDone = CountForce(epsillon);
-
-                    // FIXME: Potential infinity loop here:
-                    if( isDone )
-                    {
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                Particles.ForEach( a => {
-                    var v = a.MagneticVector * MagneticField.MagneticVector;
-                    sum += v.X + v.Y + v.Z;
-                } );
+            Particles.ForEach( a => {
+                var v = a.MagneticVector * magneticField.MagneticVector;
+                sum += v.X + v.Y + v.Z;
+            } );
 
-                Result.Add( new Result( i, sum / Particles.Count ) );
-            }           
+            return sum / Particles.Count;
         }
 
 
@@ -260,7 +237,7 @@ namespace ClusterLib
             {
                 var particle = Particles[ i ];
 
-                var sp = particle.MagneticVector.dot( particle.EasyAnisotropyAxis );
+                var sp = particle.MagneticVector.Dot( particle.EasyAnisotropyAxis );
 
                 var Ha = particle.EasyAnisotropyAxis * sp * particle.Material.MagneticDamping;
 
@@ -272,44 +249,44 @@ namespace ClusterLib
             }
         }
 
-        public void MakeStep()
+        public void MakeStep( Magnetic magneticField )
         {
-            var Hrs = Particles.ConvertAll( p => p.EffectiveMagneticField.mod() );
+            var Hrs = Particles.ConvertAll( p => p.EffectiveMagneticField.Mod() );
             double maxHr = Hrs.Max();
 
             // TODO: Why dt isn't a constant?? Why maxHr??
-            var dt = MagneticField.StabFactor * Math.PI /
-                     ( 30 * maxHr * ( 1 + MagneticField.Stc ) * ( 1 + MagneticField.Kappa * MagneticField.Kappa ) );
+            var dt = magneticField.StabFactor * Math.PI /
+                     ( 30 * maxHr * ( 1 + magneticField.Stc ) * ( 1 + magneticField.Kappa * magneticField.Kappa ) );
 
             foreach( var particle in Particles )
             {
                 var magnetic = particle.MagneticVector;
 
-                var H = particle.EffectiveMagneticField + magnetic * maxHr * MagneticField.Stc;
+                var H = particle.EffectiveMagneticField + magnetic * maxHr * magneticField.Stc;
 
-                var at = 1 / ( 1 + Math.Pow( dt * H.mod(), 2 ) );
+                var at = 1 / ( 1 + Math.Pow( dt * H.Mod(), 2 ) );
 
-                var x = H.dot( particle.MagneticVector ) * dt * dt;
+                var x = H.Dot( particle.MagneticVector ) * dt * dt;
 
-                var v = H.cross( magnetic );
+                var v = H.Cross( magnetic );
                 v = v * dt;
 
                 magnetic = ( magnetic + H * x + v ) * at;
 
-                particle.MagneticVector = magnetic / magnetic.mod();
+                particle.MagneticVector = magnetic / magnetic.Mod();
             }
         }
 
-        public bool CountForce(double epsillon)
+        public bool CountForce( double epsillon )
         {
             bool isDone = true;
             foreach( var particle in Particles )
             {
                 // [ particle.MagneticVector, particle.MagneticVector ] <= epsillon
 
-                var v = particle.EffectiveMagneticField.cross( particle.MagneticVector );
+                var v = particle.EffectiveMagneticField.Cross( particle.MagneticVector );
 
-                if( v.mod() >= epsillon )
+                if( v.Mod() >= epsillon )
                 {
                     isDone = false;
                 }
