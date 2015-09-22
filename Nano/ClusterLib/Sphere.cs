@@ -173,7 +173,7 @@ namespace ClusterLib
         /// </summary>
         /// <param name="magneticIntensityRange">Magnetic intensity range.</param>
         /// <param name="step">Step.</param>
-        public void calculate( IEnumerable<double> magneticIntensityRange, double step )
+        public void calculate( IEnumerable<double> magneticIntensityRange, double step, double epsillon )
         {
             if( Particles == null || !Particles.Any() )
             {
@@ -202,23 +202,22 @@ namespace ClusterLib
             {
                 double sum = 0;
              
-                var H0cur = MagneticField.MagneticVector * i;
+                var magneticVector = MagneticField.MagneticVector * i;
 
-                double rave;
                 int iterCount = 0;
 
                 while( true )
                 {
-                    CountH( H0cur );
+                    CountH( magneticVector );
                     MakeStep();
-                    rave = CountForce();
+                    var isDone = CountForce(epsillon);
 
                     if( ++iterCount >= maxIterCount )
                     {
                         break;
                     }
 
-                    if( rave <= MagneticField.EpsR )
+                    if( isDone )
                     {
                         break;
                     }
@@ -289,50 +288,39 @@ namespace ClusterLib
 
             foreach( var particle in Particles )
             {
-                Vector Calc;
-                Calc = particle.MagneticVector;
+                var magnetic = particle.MagneticVector;
 
-                var H = particle.EffectiveMagneticField + Calc * maxHr * MagneticField.Stc;
+                var H = particle.EffectiveMagneticField + magnetic * maxHr * MagneticField.Stc;
 
                 var at = 1 / ( 1 + Math.Pow( dt * H.mod(), 2 ) );
 
                 var x = H.dot( particle.MagneticVector ) * dt * dt;
 
-                var v = new Vector();
-                v.X = dt * ( H.Y * Calc.Z - H.Z * Calc.Y );
-                v.Y = dt * ( H.Z * Calc.X - H.X * Calc.Z );
-                v.Z = dt * ( H.X * Calc.Y - H.Y * Calc.X );
+                var v = H.cross( magnetic );
+                v = v * dt;
 
-                Calc = ( Calc + H * x + v ) * at;
+                magnetic = ( magnetic + H * x + v ) * at;
 
-                particle.MagneticVector = Calc / Calc.mod();
+                particle.MagneticVector = magnetic / magnetic.mod();
             }
         }
 
-        public double CountForce()
-        {         
-            double Rmax = 0;
-
-            double rave = 0;
-
+        public bool CountForce(double epsillon)
+        {
+            bool isDone = true;
             foreach( var particle in Particles )
             {
-                var v = new Vector();
-                v.X = particle.EffectiveMagneticField.Y * particle.MagneticVector.Z - particle.EffectiveMagneticField.Z * particle.MagneticVector.Y;
-                v.Y = particle.EffectiveMagneticField.Z * particle.MagneticVector.X - particle.EffectiveMagneticField.X * particle.MagneticVector.Z;
-                v.Z = particle.EffectiveMagneticField.X * particle.MagneticVector.Y - particle.EffectiveMagneticField.Y * particle.MagneticVector.X;
+                // [ particle.MagneticVector, particle.MagneticVector ] <= epsillon
 
-                var x = v.mod() / particle.EffectiveMagneticField.mod();
-                if( Rmax < x )
+                var v = particle.EffectiveMagneticField.cross( particle.MagneticVector );
+
+                if( v.mod() >= epsillon )
                 {
-                    Rmax = x;
+                    isDone = false;
                 }
-
-                rave += Math.Abs( x );
             }
-            rave = rave / ParticlesCount;
 
-            return rave;
+            return isDone;
         }
 
     }

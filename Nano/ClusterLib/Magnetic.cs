@@ -30,7 +30,6 @@ namespace ClusterLib
         public double Stc { get; set; }
         public double StabFactor { get; set; }
         public double Kappa { get; set; }
-        public double EpsR { get; set; }
         public Vector MagneticVector { get; set; }
     }
 }

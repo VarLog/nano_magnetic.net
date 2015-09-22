@@ -44,7 +44,8 @@ namespace Cluster
             public const double Kappa = 0.2;
             public const double Stc = 30;
             public const double StabFactor = 30;
-            public const double EpsR = 1e-12;
+
+            public const double Epsillon = 1e-8;
 
             public const double ClusterRadius = 80e-7;
 
@@ -86,7 +87,7 @@ namespace Cluster
             double kappa = Defaults.Kappa;
             double stc = Defaults.Stc;
             double stabFactor = Defaults.StabFactor;
-            double epsR = Defaults.EpsR;
+            double epsillon = Defaults.Epsillon;
 
             double clusterRadius = Defaults.ClusterRadius;
 
@@ -106,7 +107,7 @@ namespace Cluster
             p.Add( "k|kappa=", "", (double v ) => kappa = v );
             p.Add( "t|stc=", "", (double v ) => stc = v );
             p.Add( "f|stab-factor=", "", (double v ) => stabFactor = v );
-            p.Add( "e|eps-r=", "", (double v ) => epsR = v );
+            p.Add( "e|epsillon=", "", (double v ) => epsillon = v );
 
             p.Add( "c|cluster-radius=", "Radius of the sphere.", (double v ) => clusterRadius = v );
 
@@ -147,7 +148,6 @@ namespace Cluster
             magnetic.Kappa = kappa;
             magnetic.Stc = stc;
             magnetic.StabFactor = stabFactor;
-            magnetic.EpsR = epsR;
 
             if( particlesCount > 0 )
             {
@@ -178,7 +178,7 @@ namespace Cluster
             }
 
             var rangeH = new [] { minH, maxH };
-            cluster.calculate( rangeH, stepH );
+            cluster.calculate( rangeH, stepH, epsillon );
 
             Console.WriteLine( "Results:" );
             cluster.Result.ForEach( r => Console.WriteLine( "U: " + r.U + " R: " + r.R ) );
