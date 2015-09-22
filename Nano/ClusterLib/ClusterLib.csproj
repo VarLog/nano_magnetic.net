@@ -40,10 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Magnetic.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Particle.cs" />

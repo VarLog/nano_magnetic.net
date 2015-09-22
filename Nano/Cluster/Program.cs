@@ -41,9 +41,7 @@ namespace Cluster
             public const double Saturation = 800;
             public const double ParticleRadius = 20e-7;
 
-            public const double Kappa = 0.2;
-            public const double Stc = 30;
-            public const double StabFactor = 30;
+            public const double Dt = 0.001;
 
             public const double Epsillon = 1e-8;
 
@@ -84,9 +82,7 @@ namespace Cluster
             double saturation = Defaults.Saturation;
             double particleRadius = Defaults.ParticleRadius;
 
-            double kappa = Defaults.Kappa;
-            double stc = Defaults.Stc;
-            double stabFactor = Defaults.StabFactor;
+            double dt = Defaults.Dt;
             double epsillon = Defaults.Epsillon;
 
             double clusterRadius = Defaults.ClusterRadius;
@@ -95,7 +91,7 @@ namespace Cluster
             double maxH = Defaults.MaxH;
             double stepH = Defaults.StepH;
 
-            int particlesCount = 0;
+            int particlesCount = 10;
 
             var p = new OptionSet();
             p.Add( "n|particles-count=", "Count of particles.", (int v ) => particlesCount = v );
@@ -104,9 +100,7 @@ namespace Cluster
             p.Add( "s|saturation=", "Magnetic saturation of the material.", (double v ) => saturation = v );
             p.Add( "p|particle-radius=", "Radius of a particular of the material.", (double v ) => particleRadius = v );
 
-            p.Add( "k|kappa=", "", (double v ) => kappa = v );
-            p.Add( "t|stc=", "", (double v ) => stc = v );
-            p.Add( "f|stab-factor=", "", (double v ) => stabFactor = v );
+            p.Add( "d|dt=", "", (double v ) => dt = v );
             p.Add( "e|epsillon=", "", (double v ) => epsillon = v );
 
             p.Add( "c|cluster-radius=", "Radius of the sphere.", (double v ) => clusterRadius = v );
@@ -142,54 +136,31 @@ namespace Cluster
                 return;
             }
 
+            if( particlesCount <= 0 )
+            {
+                Console.Write( appName + ": " );
+                Console.WriteLine( "Count of the particles must be positive" );
+                Console.WriteLine( "Try `" + appName + " --help' for more information." );
+                return;
+            }
+
             var material = new Material( anisotropy, saturation, particleRadius );
-
-            var magnetic = new Magnetic();
-            magnetic.Kappa = kappa;
-            magnetic.Stc = stc;
-            magnetic.StabFactor = stabFactor;
-
-            if( particlesCount > 0 )
-            {
-                // Generate random MagneticVector
-                var R = new Random();
-
-                var x = 2 * ( R.NextDouble() - 0.5 );
-                var y = 2 * ( R.NextDouble() - 0.5 );
-                var z = 2 * ( R.NextDouble() - 0.5 );
-                magnetic.MagneticVector = new Vector( x, y, z );
-            }
-            else
-            {
-                // Use predefined MagneticVector
-                magnetic.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            }
 
             var cluster = new Sphere( clusterRadius );
 
-            // Analysis disable once ConvertIfStatementToConditionalTernaryExpression
-            if( particlesCount > 0 )
-            {
-                // Generate particles
-                cluster.Particles = Utils.GenerateRandromParticlesInSphere( material, clusterRadius, particlesCount );
-            }
-            else
-            {
-                // Use predefined particles
-                cluster.Particles = Utils.GetPredefineParticles( material );
-            }
+            // Generate particles
+            cluster.Particles = Utils.GenerateRandromParticlesInSphere( material, clusterRadius, particlesCount );
 
             var results = new Dictionary<double, double>();
 
-            for( var i = minH; i < maxH; i += stepH )
+            for( var i = minH; i <= maxH; i += stepH )
             {
-                magnetic.MagneticVector = magnetic.MagneticVector * i;
+                var externalMagneticField = new Vector( i, 0, 0 );
 
-                var magneticAverage = cluster.Calculate( magnetic, epsillon );
+                var magneticMomentAverage = cluster.Calculate( externalMagneticField, dt, epsillon );
 
-                results.Add(i, magneticAverage);
+                results.Add( i, magneticMomentAverage.X );
             }
-
 
             Console.WriteLine( "Results:" );
             foreach( var pair in results )

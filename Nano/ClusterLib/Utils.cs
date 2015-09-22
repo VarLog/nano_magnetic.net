@@ -86,65 +86,8 @@ namespace ClusterLib
                 res.Add( particle );
             }
 
-            res.ForEach( p => p.RadiusVector = p.RadiusVector / radius );
-
             return res;
         }
-
-        /// <summary>
-        /// Gets a list of 4 predefined particles.
-        /// </summary>
-        /// <returns>The determ particles.</returns>
-        /// <param name="material">Material.</param>
-        public static List<Particle> GetPredefineParticles( Material material )
-        {
-            var res = new List<Particle>();
-
-            var p1 = new Particle( material );
-            p1.RadiusVector = new Vector( 0.5, 0.25, 0.25 );
-            p1.EasyAnisotropyAxis = new Vector( 1 / Math.Sqrt( 2 ), 1 / Math.Sqrt( 2 ), 0 );
-            p1.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            res.Add( p1 );
-
-            var p2 = new Particle( material );
-            p2.RadiusVector = new Vector( -0.25, 0.5, 0.25 );
-            p2.EasyAnisotropyAxis = new Vector( 0, 0, 1 );
-            p2.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            res.Add( p2 );
-
-            var p3 = new Particle( material );
-            p3.RadiusVector = new Vector( -0.5, -0.25, 0.25 );
-            p3.EasyAnisotropyAxis = new Vector( 1 ) / Math.Sqrt( 3 );
-            p3.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            res.Add( p3 );
-
-            var p4 = new Particle( material );
-            p4.RadiusVector = new Vector( -0.25, -0.25, -0.25 );
-            p4.EasyAnisotropyAxis = new Vector( 0, 0, 1 );
-            p4.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            res.Add( p4 );
-        
-            return res;
-        }
-
-        /// <summary>
-        /// Gets a single predefined particle.
-        /// </summary>
-        /// <returns>The determ single particle.</returns>
-        /// <param name="material">Material.</param>
-        public static List<Particle> GetPredefineSingleParticle( Material material )
-        {
-            var res = new List<Particle>();
-
-            var p = new Particle( material );
-            p.RadiusVector = new Vector( 0.5, 0.25, 0.25 );
-            p.EasyAnisotropyAxis = new Vector( 1, 0, 0 );
-            p.MagneticVector = new Vector( 1 ) / Math.Sqrt( 3 );
-            res.Add( p );
-
-            return res;
-        }
-
     }
 }
 

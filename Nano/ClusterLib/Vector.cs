@@ -113,7 +113,33 @@ namespace ClusterLib
         /// </summary>
         public Vector Norm()
         {
+            var mod = Mod();
+            if( Math.Abs( mod ) < double.Epsilon )
+            {
+                throw new Exception( "The module of the vector is equal to zero" );
+            }
             return this / Mod();
+        }
+
+        /// <summary>
+        /// Return true if the vector is equal to zero.
+        /// </summary>
+        /// <returns><c>true</c>, if the vector is equal to zero, <c>false</c> otherwise.</returns>
+        public bool isZero()
+        {
+            if( Math.Abs( X ) > double.Epsilon )
+            {
+                return false;
+            }
+            if( Math.Abs( Y ) > double.Epsilon )
+            {
+                return false;
+            }
+            if( Math.Abs( Z ) > double.Epsilon )
+            {
+                return false;
+            }
+            return true;
         }
 
         public static Vector operator *( Vector v1, Vector v2 )

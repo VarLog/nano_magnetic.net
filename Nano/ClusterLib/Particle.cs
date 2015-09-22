@@ -29,8 +29,6 @@ namespace ClusterLib
 {
     public class Particle
     {
-        #region Parametrs
-
         /// <summary>
         /// Gets or sets the radius vector in the cluster.
         /// \f$r\f$
@@ -65,20 +63,10 @@ namespace ClusterLib
         /// <value>The effective magnetic field vector.</value>
         public Vector EffectiveMagneticField { get; set; }
 
-        #endregion
-
-        #region Constructors
-
         public Particle( Material material )
         {
             Material = material;
-            genNormalVector();
-        }
-
-        #endregion
-
-        void genNormalVector()
-        {
+        
             var rand = new Random();
 
             var randVector = new Vector( ( rand.NextDouble() - 0.5 ),
@@ -86,7 +74,7 @@ namespace ClusterLib
                                  ( rand.NextDouble() - 0.5 ) );
 
             EasyAnisotropyAxis = randVector;
-            EasyAnisotropyAxis = EasyAnisotropyAxis / EasyAnisotropyAxis.Mod();
+            EasyAnisotropyAxis = EasyAnisotropyAxis.Norm();
         }
 
         public bool isIntersected( Particle that )
