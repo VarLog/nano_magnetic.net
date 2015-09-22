@@ -64,7 +64,6 @@ namespace ClusterLib
         /// <param name="z">The z coordinate.</param>
         public Vector( double x, double y, double z ) : this()
         {
-
             X = x;
             Y = y;
             Z = z;
@@ -89,10 +88,24 @@ namespace ClusterLib
         /// <summary>
         /// Dot product of two vector: this and that.
         /// </summary>
-        /// <param name="that">Another Vector</param>
+        /// <param name="that">Result scalar</param>
         public double dot( Vector that )
         {
             return X * that.X + Y * that.Y + Z * that.Z;
+        }
+
+        /// <summary>
+        /// Cross product of two vector: [ this x that ].
+        /// </summary>
+        /// <param name="that">Result vector.</param>
+        public Vector cross( Vector that )
+        {
+            Vector res;
+            res.X = Y * that.Z - Z * that.Y;
+            res.Y = Z * that.X - X * that.Z;
+            res.Z = X * that.Y - Y * that.X;
+
+            return res;
         }
 
         public static Vector operator *( Vector v1, Vector v2 )
