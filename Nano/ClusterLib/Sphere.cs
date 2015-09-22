@@ -68,8 +68,6 @@ namespace ClusterLib
                             throw new Exception( "All particles must have the same material" );
                         }
                     }
-
-                    particles.ForEach( p => p.MagneticVector = MagneticField.MagneticVector );
                 }
             }
         }
@@ -180,6 +178,8 @@ namespace ClusterLib
                 throw new Exception( "There are not any particles to calculate" );
             }
 
+            particles.ForEach( p => p.MagneticVector = MagneticField.MagneticVector );
+
             var volume = ( 4.0 / 3.0 ) * Math.PI * Math.Pow( Radius, 3 );
             ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
 
@@ -191,8 +191,6 @@ namespace ClusterLib
 
 
             calculateDistinations();
-
-            const int maxIterCount = 10000;
 
             var array = magneticIntensityRange.ToArray();
             var min = array.ElementAt( 0 );
@@ -212,11 +210,7 @@ namespace ClusterLib
                     MakeStep();
                     var isDone = CountForce(epsillon);
 
-                    if( ++iterCount >= maxIterCount )
-                    {
-                        break;
-                    }
-
+                    // FIXME: Potential infinity loop here:
                     if( isDone )
                     {
                         break;
@@ -283,6 +277,7 @@ namespace ClusterLib
             var Hrs = Particles.ConvertAll( p => p.EffectiveMagneticField.mod() );
             double maxHr = Hrs.Max();
 
+            // TODO: Why dt isn't a constant?? Why maxHr??
             var dt = MagneticField.StabFactor * Math.PI /
                      ( 30 * maxHr * ( 1 + MagneticField.Stc ) * ( 1 + MagneticField.Kappa * MagneticField.Kappa ) );
 
