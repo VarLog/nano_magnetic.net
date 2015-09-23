@@ -91,7 +91,7 @@ namespace Cluster
             double maxH = Defaults.MaxH;
             double stepH = Defaults.StepH;
 
-            int particlesCount = 10;
+            int particlesCount = 2;
 
             var p = new OptionSet();
             p.Add( "n|particles-count=", "Count of particles.", (int v ) => particlesCount = v );
@@ -165,7 +165,7 @@ namespace Cluster
             Console.WriteLine( "Results:" );
             foreach( var pair in results )
             {
-                Console.WriteLine( "ExternalMagneticField: " + pair.Key + " EffectiveMagneticField: " + pair.Value );
+                Console.WriteLine( "ExternalMagneticField:\t" + pair.Key + "\tEffectiveMagneticField:\t" + pair.Value );
             }
         }
     }
