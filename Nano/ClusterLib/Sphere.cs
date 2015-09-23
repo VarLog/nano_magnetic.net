@@ -113,15 +113,6 @@ namespace ClusterLib
                 throw new Exception( "There are not any particles to calculate" );
             }
 
-            if( externalMagneticField.isZero() )
-            {
-                particles.ForEach( p => p.MagneticVector = new Vector() );
-            }
-            else 
-            {
-                particles.ForEach( p => p.MagneticVector = externalMagneticField.Norm() );
-            }
-
             var volume = ( 4.0 / 3.0 ) * Math.PI * Math.Pow( Radius, 3 );
             ParticlesDensity = ParticlesMaterial.Volume * ParticlesCount / volume;
 
@@ -131,21 +122,25 @@ namespace ClusterLib
 
             Utils.Debug( "Anisotropy coefficient == " + AnisotropyCoefficient );
 
+            bool isFirstIteration = true;
             bool isDone = false;
             while( !isDone )
             {
                 isDone = true;
                 foreach( var particle in Particles )
                 {
-                    if( particle.MagneticVector.Cross( particle.EffectiveMagneticField ).Mod() <= epsillon )
+                    if( !isFirstIteration )
                     {
-                        continue;
+                        if( particle.MagneticVector.Cross( particle.EffectiveMagneticField ).Mod() <= epsillon )
+                        {
+                            continue;
+                        }
                     }
+
                     isDone = false;
 
-                    var sp = particle.MagneticVector.Dot( particle.EasyAnisotropyAxis );
-
-                    var Ha = particle.EasyAnisotropyAxis * sp * particle.Material.MagneticDamping;
+                    var Ha = particle.EasyAnisotropyAxis * particle.MagneticVector.Dot( particle.EasyAnisotropyAxis )
+                             * particle.Material.MagneticDamping;
 
                     var HM = new Vector();
 
@@ -173,6 +168,7 @@ namespace ClusterLib
 
                     particle.MagneticVector = aNext * at;
                 }
+                isFirstIteration = false;
             }
 
             var magneticMomentAverage = new Vector();
