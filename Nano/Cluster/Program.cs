@@ -45,7 +45,7 @@ namespace Cluster
 
             public const double Epsillon = 1e-8;
 
-            public const double ClusterRadius = 80e-7;
+            public const double ClusterRadius = 80e-3;
 
             public const double MinH = -1500;
             public const double MaxH = 1500;
@@ -91,7 +91,8 @@ namespace Cluster
             double maxH = Defaults.MaxH;
             double stepH = Defaults.StepH;
 
-            int particlesCount = 2;
+            int particlesCount = 40;
+            Utils.VerbosityLevel++;
 
             var p = new OptionSet();
             p.Add( "n|particles-count=", "Count of particles.", (int v ) => particlesCount = v );
@@ -155,6 +156,11 @@ namespace Cluster
 
             for( var i = minH; i <= maxH; i += stepH )
             {
+                if( Math.Abs( i ) < double.Epsilon )
+                {
+                    //continue;
+                }
+
                 var externalMagneticField = new Vector( i, 0, 0 );
 
                 var magneticMomentAverage = cluster.Calculate( externalMagneticField, dt, epsillon );

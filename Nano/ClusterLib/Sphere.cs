@@ -124,14 +124,21 @@ namespace ClusterLib
 
             bool isFirstIteration = true;
             bool isDone = false;
+
+            int i = 0;
             while( !isDone )
             {
+                Utils.Debug( "Iteration " + ++i );
+
                 isDone = true;
                 foreach( var particle in Particles )
                 {
                     if( !isFirstIteration )
                     {
-                        if( particle.MagneticVector.Cross( particle.EffectiveMagneticField ).Mod() <= epsillon )
+                        var curhef = particle.EffectiveMagneticField.Norm();
+                        var curhr = curhef - curhef.Cross( particle.MagneticVector ) * particle.Material.MagneticDamping;
+
+                        if( particle.MagneticVector.Cross( curhr ).Mod() <= epsillon )
                         {
                             continue;
                         }
@@ -155,13 +162,14 @@ namespace ClusterLib
                         HM = HM + ( numerator / denumerator );
                     }
 
-                    HM = HM * particle.Material.MagneticSaturation * particle.Material.Volume;
+                    HM = HM * particle.Material.MagneticSaturation * particle.Material.Volume * ParticlesCount;
 
                     particle.EffectiveMagneticField = Ha + HM + externalMagneticField;
 
-                    var hr = particle.EffectiveMagneticField - particle.EffectiveMagneticField.Cross( particle.MagneticVector )
-                             * particle.Material.MagneticDamping;
-                 
+
+                    var hef = particle.EffectiveMagneticField.Norm();
+                    var hr = hef - hef.Cross( particle.MagneticVector ) * particle.Material.MagneticDamping;
+
                     var at = 1 / ( 1 + Math.Pow( dt * hr.Mod(), 2 ) );
                     var aNext = particle.MagneticVector + hr.Cross( particle.MagneticVector ) * dt
                                 + hr * Math.Pow( dt, 2 ) * hr.Dot( particle.MagneticVector );
