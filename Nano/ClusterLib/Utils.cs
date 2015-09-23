@@ -70,10 +70,9 @@ namespace ClusterLib
             {
                 var particle = new Particle( material );
 
-                var randPosition = new Vector( ( rand.NextDouble() - 0.5 ) * radius, 
-                                       ( rand.NextDouble() - 0.5 ) * radius, 
-                                       ( rand.NextDouble() - 0.5 ) * radius );
-                particle.RadiusVector = randPosition;
+                particle.RadiusVector = new Vector( ( rand.NextDouble() - 0.5 ) * radius, 
+                    ( rand.NextDouble() - 0.5 ) * radius, 
+                    ( rand.NextDouble() - 0.5 ) * radius );
 
                 // TODO: Improve algorithm to avoid intersections
                 bool isIntersected = res.Any( particle.isIntersected );

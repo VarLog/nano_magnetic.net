@@ -69,12 +69,15 @@ namespace ClusterLib
         
             var rand = new Random();
 
-            var randVector = new Vector( ( rand.NextDouble() - 0.5 ),
-                                 ( rand.NextDouble() - 0.5 ),
-                                 ( rand.NextDouble() - 0.5 ) );
-
-            EasyAnisotropyAxis = randVector;
+            EasyAnisotropyAxis = new Vector( ( rand.NextDouble() - 0.5 ),
+                ( rand.NextDouble() - 0.5 ),
+                ( rand.NextDouble() - 0.5 ) );
             EasyAnisotropyAxis = EasyAnisotropyAxis.Norm();
+
+            MagneticVector = new Vector( ( rand.NextDouble() - 0.5 ),
+                ( rand.NextDouble() - 0.5 ),
+                ( rand.NextDouble() - 0.5 ) );
+            MagneticVector = MagneticVector.Norm();
         }
 
         public bool isIntersected( Particle that )
